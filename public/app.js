@@ -1,4 +1,526 @@
 // OmniAI Project Organizer - Frontend Application
+// Support both local Node.js server and static hosting (GitHub Pages)
+const isStaticHosted = window.location.protocol === 'file:' || 
+  (!window.location.host.includes('localhost') && !window.location.host.includes('127.0.0.1'));
+
+if (isStaticHosted) {
+  const STORAGE_KEY = 'omni_ai_db_v1';
+  const defaultClientDb = {
+    projects: [
+      {
+        id: "proj_massmailer",
+        name: "MassMailer",
+        description: "High-volume email outreach automation system with SMTP rotation and deliverability tracking.",
+        status: "in_progress",
+        priority: "high",
+        category: "Automation & Outreach",
+        directory: "C:\\Users\\jordy\\Projects\\MassMailer",
+        aiRoles: {
+          claude: "Core TypeScript/Node architecture, queue workers & retry policies",
+          chatgpt: "Cold outreach copy, A/B test email variants, follow-up sequences",
+          antigravity: "Autonomous test runner, bulk test mocks & CLI tools",
+          grok: "Inbox deliverability news, spam filter algo updates & blacklist research"
+        },
+        createdAt: "2026-10-08T18:00:00.000Z",
+        updatedAt: "2026-10-09T20:30:00.000Z"
+      },
+      {
+        id: "proj_aiforlife",
+        name: "ai-for-life",
+        description: "AI education platform & interactive portal helping students master generative tools.",
+        status: "in_progress",
+        priority: "high",
+        category: "EdTech & Web",
+        directory: "C:\\Users\\jordy\\Projects\\ai-for-life",
+        aiRoles: {
+          claude: "Interactive demo video player, student discount flows & frontend UI",
+          chatgpt: "Curriculum design, quiz generation & beginner explainers",
+          antigravity: "Codebase structuring, asset pipelines & deployment automation",
+          grok: "Competitor course benchmarks, viral tech trends & community Q&A"
+        },
+        createdAt: "2026-10-07T14:00:00.000Z",
+        updatedAt: "2026-10-09T13:14:00.000Z"
+      },
+      {
+        id: "proj_tradingalgo",
+        name: "Trading-ALGO",
+        description: "Quantitative trading strategies, backtesting framework and market signal processors.",
+        status: "active",
+        priority: "urgent",
+        category: "FinTech & Quant",
+        directory: "C:\\Users\\jordy\\Projects\\Trading-ALGO",
+        aiRoles: {
+          claude: "Mathematical strategy formulation, indicator vectorization & code audit",
+          chatgpt: "Strategy documentation, trading journal summaries & risk checklists",
+          antigravity: "Fast execution engine, historical bar data ingestion & unit tests",
+          grok: "Real-time market sentiment on X, macro breaking news & regulatory alerts"
+        },
+        createdAt: "2026-10-05T10:00:00.000Z",
+        updatedAt: "2026-10-08T12:54:00.000Z"
+      },
+      {
+        id: "proj_momswoodworking",
+        name: "moms-woodworking-business",
+        description: "E-commerce catalog and customer portal for artisanal handcrafted woodworking.",
+        status: "active",
+        priority: "medium",
+        category: "E-Commerce",
+        directory: "C:\\Users\\jordy\\Projects\\moms-woodworking-business",
+        aiRoles: {
+          claude: "Storefront UI components, shopping cart state & checkout logic",
+          chatgpt: "Engaging product stories, dimensions descriptions & customer email templates",
+          antigravity: "Image optimization scripts & catalog schema validations",
+          grok: "Etsy trending wood finishes, holiday gift demand & local artisan pricing"
+        },
+        createdAt: "2026-10-08T19:00:00.000Z",
+        updatedAt: "2026-10-09T21:27:00.000Z"
+      },
+      {
+        id: "proj_landscout",
+        name: "LandScout",
+        description: "Automated real estate land finder with zoning verification and tax parcel scraping.",
+        status: "planning",
+        priority: "medium",
+        category: "PropTech & Scraping",
+        directory: "C:\\Users\\jordy\\Projects\\LandScout",
+        aiRoles: {
+          claude: "GIS mapping data pipelines, parcel boundaries & API integration",
+          chatgpt: "Zoning summary generator & landowner outreach letter drafts",
+          antigravity: "Scraper resilience, rate limit handling & SQLite caching",
+          grok: "Municipal zoning law updates, commercial land demand & satellite analysis"
+        },
+        createdAt: "2026-09-29T15:00:00.000Z",
+        updatedAt: "2026-10-08T16:00:00.000Z"
+      }
+    ],
+    tasks: [
+      {
+        id: "task_1",
+        projectId: "proj_massmailer",
+        title: "Refactor SMTP queue worker retry mechanism",
+        description: "Fix exponential backoff and connection timeout handling for high-concurrency sending.",
+        assignedAi: "claude",
+        status: "in_progress",
+        priority: "high",
+        createdAt: "2026-10-09T18:00:00.000Z",
+        updatedAt: "2026-10-09T20:00:00.000Z"
+      },
+      {
+        id: "task_2",
+        projectId: "proj_massmailer",
+        title: "Draft 5 personalized B2B cold outreach email templates",
+        description: "Write compelling 3-step sequence focusing on deliverability pain points.",
+        assignedAi: "chatgpt",
+        status: "in_progress",
+        priority: "medium",
+        createdAt: "2026-10-09T19:00:00.000Z",
+        updatedAt: "2026-10-09T21:00:00.000Z"
+      },
+      {
+        id: "task_3",
+        projectId: "proj_massmailer",
+        title: "Implement autonomous CLI test mock harness",
+        description: "Generate end-to-end sandbox runner to simulate 10,000 sent emails without hitting live endpoints.",
+        assignedAi: "antigravity",
+        status: "todo",
+        priority: "high",
+        createdAt: "2026-10-09T19:30:00.000Z",
+        updatedAt: "2026-10-09T19:30:00.000Z"
+      },
+      {
+        id: "task_4",
+        projectId: "proj_massmailer",
+        title: "Investigate October 2026 Gmail/Yahoo DMARC enforcement updates",
+        description: "Check latest spam threshold rules and DKIM rotation requirements.",
+        assignedAi: "grok",
+        status: "completed",
+        priority: "medium",
+        createdAt: "2026-10-09T16:00:00.000Z",
+        updatedAt: "2026-10-09T17:30:00.000Z"
+      },
+      {
+        id: "task_5",
+        projectId: "proj_aiforlife",
+        title: "Finalize tour video & interactive preview embeds",
+        description: "Polish responsive player container and interactive student code sandbox.",
+        assignedAi: "claude",
+        status: "review",
+        priority: "high",
+        createdAt: "2026-10-09T12:00:00.000Z",
+        updatedAt: "2026-10-09T13:14:00.000Z"
+      },
+      {
+        id: "task_6",
+        projectId: "proj_aiforlife",
+        title: "Create interactive module quiz questions for Antigravity & Claude Code",
+        description: "Draft 15 scenario-based questions evaluating tool choices and multi-agent setup.",
+        assignedAi: "chatgpt",
+        status: "todo",
+        priority: "medium",
+        createdAt: "2026-10-09T14:00:00.000Z",
+        updatedAt: "2026-10-09T14:00:00.000Z"
+      },
+      {
+        id: "task_7",
+        projectId: "proj_tradingalgo",
+        title: "Optimize Mean Reversion vector calculations in NumPy",
+        description: "Profile 5-minute bar calculations to reduce CPU bottleneck by 40%.",
+        assignedAi: "claude",
+        status: "in_progress",
+        priority: "urgent",
+        createdAt: "2026-10-09T17:00:00.000Z",
+        updatedAt: "2026-10-09T20:15:00.000Z"
+      },
+      {
+        id: "task_8",
+        projectId: "proj_tradingalgo",
+        title: "Build live test suite for broker order gateway",
+        description: "Automate edge cases: partial fills, slippage safeguards, and killswitch trigger.",
+        assignedAi: "antigravity",
+        status: "in_progress",
+        priority: "urgent",
+        createdAt: "2026-10-09T18:30:00.000Z",
+        updatedAt: "2026-10-09T21:10:00.000Z"
+      },
+      {
+        id: "task_9",
+        projectId: "proj_tradingalgo",
+        title: "Scan crypto & tech stock sentiment trends on X (Twitter)",
+        description: "Aggregate key ticker mentions ($NVDA, $BTC, $ETH) and highlight unusual spikes.",
+        assignedAi: "grok",
+        status: "todo",
+        priority: "high",
+        createdAt: "2026-10-09T20:00:00.000Z",
+        updatedAt: "2026-10-09T20:00:00.000Z"
+      },
+      {
+        id: "task_10",
+        projectId: "proj_momswoodworking",
+        title: "Write rich descriptions for walnut live-edge dining tables",
+        description: "Focus on craftsmanship, dimensions, wood origins, and protective finish care.",
+        assignedAi: "chatgpt",
+        status: "todo",
+        priority: "medium",
+        createdAt: "2026-10-09T15:00:00.000Z",
+        updatedAt: "2026-10-09T15:00:00.000Z"
+      },
+      {
+        id: "task_11",
+        projectId: "proj_momswoodworking",
+        title: "Research top holiday search trends for custom wood gifts",
+        description: "Identify high-converting keywords and popular price points on Etsy & Pinterest.",
+        assignedAi: "grok",
+        status: "review",
+        priority: "medium",
+        createdAt: "2026-10-09T16:00:00.000Z",
+        updatedAt: "2026-10-09T19:30:00.000Z"
+      }
+    ],
+    sessions: [
+      {
+        id: "sess_1",
+        projectId: "proj_massmailer",
+        title: "Queue Worker & SMTP Concurrency Refactor",
+        ai: "claude",
+        url: "https://claude.ai/code/session_01XiDHetDPp1L3TAw3VP1Rjd",
+        notes: "Architected backoff retries and connection pool balancing.",
+        createdAt: "2026-10-09T18:00:00.000Z"
+      },
+      {
+        id: "sess_2",
+        projectId: "proj_massmailer",
+        title: "Outreach Copy & Cold Sequence Ideation",
+        ai: "chatgpt",
+        url: "https://chatgpt.com/c/66fb9c00-2d88-8005-9a80-bfd8b8772a91",
+        notes: "Generated 3 variants of pitch email for SaaS founders.",
+        createdAt: "2026-10-09T19:00:00.000Z"
+      },
+      {
+        id: "sess_3",
+        projectId: "proj_tradingalgo",
+        title: "Real-time Order Execution & Risk Engine",
+        ai: "antigravity",
+        url: "local://antigravity/session/120f4050-6f6d-43e3-8cc5-d4cc4e070268",
+        notes: "Antigravity agent executing local code improvements and unit tests.",
+        createdAt: "2026-10-09T21:00:00.000Z"
+      },
+      {
+        id: "sess_4",
+        projectId: "proj_tradingalgo",
+        title: "Grok Market Pulse & Sentiment Analysis",
+        ai: "grok",
+        url: "https://grok.com/share/b81f9a2b",
+        notes: "Queried Grok DeepSearch for overnight geopolitical risk factors.",
+        createdAt: "2026-10-09T20:00:00.000Z"
+      }
+    ],
+    quickNotes: [
+      {
+        id: "note_1",
+        text: "Morning routine: Check Grok sentiment scan -> Review Claude code PRs -> Let Antigravity run test suites -> Use ChatGPT for customer replies.",
+        createdAt: "2026-10-09T21:00:00.000Z"
+      }
+    ]
+  };
+
+  function getClientDb() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultClientDb));
+        return defaultClientDb;
+      }
+      return JSON.parse(raw);
+    } catch (e) {
+      return defaultClientDb;
+    }
+  }
+
+  function saveClientDb(db) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    } catch (e) {
+      console.error('Failed to save to localStorage', e);
+    }
+  }
+
+  const originalFetch = window.fetch;
+  window.fetch = async function (resource, options = {}) {
+    const url = typeof resource === 'string' ? resource : resource.url;
+    if (!url.startsWith('/api/') && !url.startsWith('/capture')) {
+      return originalFetch(resource, options);
+    }
+
+    const method = (options.method || 'GET').toUpperCase();
+    let body = {};
+    if (options.body) {
+      try { body = typeof options.body === 'string' ? JSON.parse(options.body) : options.body; } catch(e){}
+    }
+    const db = getClientDb();
+
+    const jsonResponse = (data, status = 200) => {
+      return new Response(JSON.stringify(data), {
+        status,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    };
+
+    if (url === '/api/dashboard') {
+      const projects = db.projects || [];
+      const tasks = db.tasks || [];
+      const sessions = db.sessions || [];
+      const aiStats = {
+        claude: { total: 0, in_progress: 0, todo: 0, review: 0, completed: 0 },
+        chatgpt: { total: 0, in_progress: 0, todo: 0, review: 0, completed: 0 },
+        antigravity: { total: 0, in_progress: 0, todo: 0, review: 0, completed: 0 },
+        grok: { total: 0, in_progress: 0, todo: 0, review: 0, completed: 0 },
+        human: { total: 0, in_progress: 0, todo: 0, review: 0, completed: 0 }
+      };
+      tasks.forEach(t => {
+        const ai = t.assignedAi || 'claude';
+        if (!aiStats[ai]) aiStats[ai] = { total: 0, in_progress: 0, todo: 0, review: 0, completed: 0 };
+        aiStats[ai].total++;
+        if (aiStats[ai][t.status] !== undefined) aiStats[ai][t.status]++;
+      });
+      const inFlightTasks = tasks.filter(t => t.status === 'in_progress' || t.status === 'review');
+      return jsonResponse({
+        date: new Date().toISOString(),
+        metrics: {
+          totalProjects: projects.length,
+          activeProjects: projects.filter(p => p.status === 'in_progress' || p.status === 'active').length,
+          totalTasks: tasks.length,
+          inFlightTasksCount: inFlightTasks.length,
+          completedTasksCount: tasks.filter(t => t.status === 'completed').length,
+          totalSessions: sessions.length
+        },
+        aiStats,
+        inFlightTasks: inFlightTasks.map(t => {
+          const proj = projects.find(p => p.id === t.projectId);
+          return { ...t, projectName: proj ? proj.name : 'Unknown Project' };
+        }),
+        recentSessions: sessions.slice(-5).reverse(),
+        quickNotes: db.quickNotes || []
+      });
+    }
+
+    if (url === '/api/projects' && method === 'GET') {
+      const tasks = db.tasks || [];
+      const sessions = db.sessions || [];
+      const res = (db.projects || []).map(p => {
+        const pTasks = tasks.filter(t => t.projectId === p.id);
+        const pSessions = sessions.filter(s => s.projectId === p.id);
+        return {
+          ...p,
+          tasksCount: pTasks.length,
+          completedTasksCount: pTasks.filter(t => t.status === 'completed').length,
+          inProgressTasksCount: pTasks.filter(t => t.status === 'in_progress').length,
+          sessionsCount: pSessions.length,
+          tasks: pTasks,
+          sessions: pSessions
+        };
+      });
+      return jsonResponse(res);
+    }
+
+    if (url === '/api/projects' && method === 'POST') {
+      const newProj = {
+        id: `proj_${Date.now()}`,
+        name: body.name || 'Untitled Project',
+        description: body.description || '',
+        status: body.status || 'in_progress',
+        priority: body.priority || 'medium',
+        category: body.category || 'General',
+        directory: body.directory || '',
+        aiRoles: body.aiRoles || { claude: '', chatgpt: '', antigravity: '', grok: '' },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      db.projects.unshift(newProj);
+      saveClientDb(db);
+      return jsonResponse(newProj, 201);
+    }
+
+    if (url.startsWith('/api/projects/') && method === 'PUT') {
+      const id = url.split('/api/projects/')[1];
+      const idx = db.projects.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        db.projects[idx] = { ...db.projects[idx], ...body, updatedAt: new Date().toISOString() };
+        saveClientDb(db);
+        return jsonResponse(db.projects[idx]);
+      }
+      return jsonResponse({ error: 'Not found' }, 404);
+    }
+
+    if (url.startsWith('/api/projects/') && method === 'DELETE') {
+      const id = url.split('/api/projects/')[1];
+      db.projects = db.projects.filter(p => p.id !== id);
+      db.tasks = db.tasks.filter(t => t.projectId !== id);
+      db.sessions = db.sessions.filter(s => s.projectId !== id);
+      saveClientDb(db);
+      return jsonResponse({ success: true, id });
+    }
+
+    if (url.startsWith('/api/tasks') && method === 'GET') {
+      let tasks = db.tasks || [];
+      const queryStr = url.includes('?') ? url.split('?')[1] : '';
+      const params = new URLSearchParams(queryStr);
+      const ai = params.get('ai');
+      const status = params.get('status');
+      const projectId = params.get('projectId');
+      if (ai) tasks = tasks.filter(t => t.assignedAi === ai);
+      if (status) tasks = tasks.filter(t => t.status === status);
+      if (projectId) tasks = tasks.filter(t => t.projectId === projectId);
+      const res = tasks.map(t => {
+        const p = (db.projects || []).find(proj => proj.id === t.projectId);
+        return { ...t, projectName: p ? p.name : 'Unknown Project' };
+      });
+      return jsonResponse(res);
+    }
+
+    if (url === '/api/tasks' && method === 'POST') {
+      const newTask = {
+        id: `task_${Date.now()}`,
+        projectId: body.projectId,
+        title: body.title || 'New Task',
+        description: body.description || '',
+        assignedAi: body.assignedAi || 'claude',
+        status: body.status || 'todo',
+        priority: body.priority || 'medium',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      db.tasks.push(newTask);
+      saveClientDb(db);
+      return jsonResponse(newTask, 201);
+    }
+
+    if (url.startsWith('/api/tasks/') && method === 'PUT') {
+      const id = url.split('/api/tasks/')[1];
+      const idx = db.tasks.findIndex(t => t.id === id);
+      if (idx !== -1) {
+        db.tasks[idx] = { ...db.tasks[idx], ...body, updatedAt: new Date().toISOString() };
+        saveClientDb(db);
+        return jsonResponse(db.tasks[idx]);
+      }
+      return jsonResponse({ error: 'Not found' }, 404);
+    }
+
+    if (url.startsWith('/api/tasks/') && method === 'DELETE') {
+      const id = url.split('/api/tasks/')[1];
+      db.tasks = db.tasks.filter(t => t.id !== id);
+      saveClientDb(db);
+      return jsonResponse({ success: true, id });
+    }
+
+    if (url === '/api/sessions' && method === 'POST') {
+      const newSession = {
+        id: `sess_${Date.now()}`,
+        projectId: body.projectId,
+        title: body.title || 'Untitled Session',
+        ai: body.ai || 'claude',
+        url: body.url || '',
+        notes: body.notes || '',
+        createdAt: new Date().toISOString()
+      };
+      db.sessions.push(newSession);
+      saveClientDb(db);
+      return jsonResponse(newSession, 201);
+    }
+
+    if (url.startsWith('/api/sessions/') && method === 'DELETE') {
+      const id = url.split('/api/sessions/')[1];
+      db.sessions = db.sessions.filter(s => s.id !== id);
+      saveClientDb(db);
+      return jsonResponse({ success: true, id });
+    }
+
+    if (url === '/api/notes' && method === 'POST') {
+      const note = { id: `note_${Date.now()}`, text: body.text || '', createdAt: new Date().toISOString() };
+      if (!db.quickNotes) db.quickNotes = [];
+      db.quickNotes.unshift(note);
+      saveClientDb(db);
+      return jsonResponse(note, 201);
+    }
+
+    if (url.startsWith('/api/notes/') && method === 'DELETE') {
+      const id = url.split('/api/notes/')[1];
+      if (db.quickNotes) db.quickNotes = db.quickNotes.filter(n => n.id !== id);
+      saveClientDb(db);
+      return jsonResponse({ success: true, id });
+    }
+
+    if (url === '/api/handoff' && method === 'POST') {
+      const { projectId, sourceAi, targetAi, specificInstruction } = body;
+      const project = (db.projects || []).find(p => p.id === projectId);
+      if (!project) return jsonResponse({ error: 'Project not found' }, 404);
+      const projTasks = (db.tasks || []).filter(t => t.projectId === projectId);
+      const completed = projTasks.filter(t => t.status === 'completed');
+      const inProgress = projTasks.filter(t => t.status === 'in_progress');
+      const formatAi = (a) => a === 'claude' ? 'Claude' : a === 'chatgpt' ? 'ChatGPT' : a === 'antigravity' ? 'Google Antigravity' : a === 'grok' ? 'Grok' : a;
+      const prompt = `### 🚀 PROJECT CONTEXT HANDOFF: ${project.name}\n` +
+        `**Handoff Channel:** ${formatAi(sourceAi)} ➔ ${formatAi(targetAi)}\n` +
+        `**Project Status:** ${project.status.toUpperCase()} | **Priority:** ${project.priority.toUpperCase()}\n\n` +
+        `#### 🎯 Objective\n${project.description || 'No description'}\n\n` +
+        `#### ✅ Completed Tasks\n${completed.length ? completed.map(t => `- [x] ${t.title}`).join('\n') : '- None yet'}\n\n` +
+        `#### 🔄 In-Progress Work\n${inProgress.length ? inProgress.map(t => `- [ ] ${t.title}`).join('\n') : '- None'}\n\n` +
+        `#### ⚡ Immediate Task as ${formatAi(targetAi).toUpperCase()}:\n${specificInstruction || project.aiRoles?.[targetAi] || 'Proceed with next priority task.'}`;
+      return jsonResponse({ project: project.name, sourceAi, targetAi, prompt });
+    }
+
+    if (url === '/api/scan/local') {
+      return jsonResponse({
+        isStaticMode: true,
+        projectsDir: "Running in Static Cloud Mode (GitHub Pages)",
+        foundProjects: (db.projects || []).map(p => ({ name: p.name, path: p.directory || 'Local', isImported: true })),
+        claudeCodeProjects: [],
+        antigravitySessions: []
+      });
+    }
+
+    return jsonResponse({ error: 'Not supported' }, 404);
+  };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Global State
   let state = {
