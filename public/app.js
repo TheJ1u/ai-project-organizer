@@ -456,7 +456,10 @@ document.addEventListener('DOMContentLoaded', () => {
               <option value="review" ${task.status === 'review' ? 'selected' : ''}>Needs Review</option>
               <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
             </select>
-            <button class="btn-close-modal btn-delete-task" data-id="${task.id}" style="font-size: 1rem;" title="Delete task">&times;</button>
+            <div style="display: flex; gap: 0.25rem; align-items: center;">
+              <button class="btn btn-xs btn-secondary btn-edit-task" data-id="${task.id}" title="Edit task">✏️</button>
+              <button class="btn-close-modal btn-delete-task" data-id="${task.id}" style="font-size: 1rem;" title="Delete task">&times;</button>
+            </div>
           </div>
         </div>
       `).join('');
@@ -467,6 +470,11 @@ document.addEventListener('DOMContentLoaded', () => {
           await updateTaskStatus(sel.dataset.id, e.target.value);
           loadFleet();
         });
+      });
+
+      // Attach edit task events
+      colContainer.querySelectorAll('.btn-edit-task').forEach(btn => {
+        btn.addEventListener('click', () => openEditTaskModal(btn.dataset.id));
       });
 
       // Attach delete task events
@@ -526,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
       colItems.innerHTML = tasksInLane.map(task => {
         const ai = getAiInfo(task.assignedAi);
         return `
-          <div class="task-card" data-id="${task.id}">
+          <div class="task-card" data-id="${task.id}" draggable="true">
             <div class="task-card-meta">
               <span class="project-pill">${escapeHtml(task.projectName)}</span>
               <span class="ai-badge ${ai.class}" style="font-size: 0.65rem;">${ai.name}</span>
@@ -540,17 +548,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 <option value="review" ${task.status === 'review' ? 'selected' : ''}>Needs Review</option>
                 <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
               </select>
-              <button class="btn-close-modal btn-delete-task" data-id="${task.id}" style="font-size: 1rem;" title="Delete task">&times;</button>
+              <div style="display: flex; gap: 0.25rem; align-items: center;">
+                <button class="btn btn-xs btn-secondary btn-edit-task" data-id="${task.id}" title="Edit task">✏️</button>
+                <button class="btn-close-modal btn-delete-task" data-id="${task.id}" style="font-size: 1rem;" title="Delete task">&times;</button>
+              </div>
             </div>
           </div>
         `;
       }).join('');
+
+      colItems.querySelectorAll('.task-card').forEach(card => {
+        card.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', card.dataset.id);
+          card.classList.add('is-dragging');
+        });
+        card.addEventListener('dragend', () => {
+          card.classList.remove('is-dragging');
+        });
+      });
+
+      const parentCol = colItems.closest('.kanban-col');
+      if (parentCol) {
+        parentCol.dataset.laneStatus = st;
+        if (!parentCol.dataset.dndBound) {
+          parentCol.dataset.dndBound = 'true';
+          parentCol.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            parentCol.classList.add('dragover');
+          });
+          parentCol.addEventListener('dragleave', (e) => {
+            if (!parentCol.contains(e.relatedTarget)) {
+              parentCol.classList.remove('dragover');
+            }
+          });
+          parentCol.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            parentCol.classList.remove('dragover');
+            const droppedTaskId = e.dataTransfer.getData('text/plain');
+            const targetStatus = parentCol.dataset.laneStatus;
+            if (droppedTaskId && targetStatus) {
+              await updateTaskStatus(droppedTaskId, targetStatus);
+              loadBoard();
+            }
+          });
+        }
+      }
 
       colItems.querySelectorAll('.task-status-select').forEach(sel => {
         sel.addEventListener('change', async (e) => {
           await updateTaskStatus(sel.dataset.id, e.target.value);
           loadBoard();
         });
+      });
+
+      colItems.querySelectorAll('.btn-edit-task').forEach(btn => {
+        btn.addEventListener('click', () => openEditTaskModal(btn.dataset.id));
       });
 
       colItems.querySelectorAll('.btn-delete-task').forEach(btn => {
@@ -611,6 +663,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('modal-project-title').textContent = 'Create New Project';
     document.getElementById('form-project').reset();
     document.getElementById('proj-id').value = '';
+    const btnDel = document.getElementById('btn-delete-project');
+    if (btnDel) btnDel.style.display = 'none';
     openModal(modalProject);
   }
 
@@ -636,7 +690,33 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('role-chatgpt').value = proj.aiRoles?.chatgpt || '';
     document.getElementById('role-grok').value = proj.aiRoles?.grok || '';
 
+    const btnDel = document.getElementById('btn-delete-project');
+    if (btnDel) btnDel.style.display = 'inline-block';
+
     openModal(modalProject);
+  }
+
+  const btnDeleteProj = document.getElementById('btn-delete-project');
+  if (btnDeleteProj) {
+    btnDeleteProj.addEventListener('click', async () => {
+      const id = document.getElementById('proj-id').value;
+      const name = document.getElementById('proj-name').value;
+      if (!id) return;
+      if (confirm(`Are you sure you want to delete project "${name}" and all associated tasks?`)) {
+        try {
+          await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+          showToast(`Deleted project "${name}"`);
+          closeModal(modalProject);
+          await loadProjects();
+          if (state.currentView === 'morning') loadDashboard();
+          if (state.currentView === 'fleet') loadFleet();
+          if (state.currentView === 'board') loadBoard();
+        } catch (err) {
+          console.error(err);
+          showToast('Error deleting project');
+        }
+      }
+    });
   }
 
   // Save Project Form
@@ -684,13 +764,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Open Task Modal
+  // Open Task Modal (New Task)
   function openTaskModalForProject(projectId = null) {
+    document.getElementById('modal-task-title').textContent = 'Assign AI Task';
     document.getElementById('form-task').reset();
     document.getElementById('task-id').value = '';
     if (projectId) {
       document.getElementById('task-project').value = projectId;
     }
+    openModal(modalTask);
+  }
+
+  // Open Edit Task Modal
+  function openEditTaskModal(taskId) {
+    const task = state.tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    document.getElementById('modal-task-title').textContent = 'Edit Task';
+    document.getElementById('task-id').value = task.id;
+    document.getElementById('task-project').value = task.projectId;
+    document.getElementById('task-title').value = task.title;
+    document.getElementById('task-desc').value = task.description || '';
+    document.getElementById('task-ai').value = task.assignedAi || 'claude';
+    document.getElementById('task-status').value = task.status || 'todo';
+    document.getElementById('task-priority').value = task.priority || 'medium';
+
     openModal(modalTask);
   }
 
@@ -701,6 +799,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Save Task Form
   document.getElementById('form-task').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const taskId = document.getElementById('task-id').value;
     const payload = {
       projectId: document.getElementById('task-project').value,
       title: document.getElementById('task-title').value,
@@ -711,12 +810,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      await fetch('/api/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      showToast('Assigned new AI task');
+      if (taskId) {
+        await fetch(`/api/tasks/${taskId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        showToast('Updated task');
+      } else {
+        await fetch('/api/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        showToast('Assigned new AI task');
+      }
       closeModal(modalTask);
 
       if (state.currentView === 'morning') loadDashboard();
@@ -725,7 +833,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (state.currentView === 'projects') loadProjects();
     } catch (err) {
       console.error(err);
-      showToast('Error assigning task');
+      showToast('Error saving task');
     }
   });
 
@@ -879,9 +987,13 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="scan-item">
           <div>
             <strong>${escapeHtml(c.name)}</strong>
-            <span class="text-muted" style="font-size: 0.7rem; display: block;">Claude Code workspace</span>
+            <span class="text-muted" style="font-size: 0.7rem; display: block;">Claude Code workspace: ${escapeHtml(c.path)}</span>
           </div>
-          <span class="scan-item-imported">✓ Detected</span>
+          <div>
+            ${c.isImported
+              ? `<span class="scan-item-imported">✓ Tracked</span>`
+              : `<button class="btn btn-xs btn-primary btn-import-scanned" data-name="${escapeHtml(c.name)}" data-path="${escapeHtml(c.path)}">+ Track</button>`}
+          </div>
         </div>
       `).join('');
 
@@ -896,8 +1008,8 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `).join('');
 
-      // Attach import buttons
-      projList.querySelectorAll('.btn-import-scanned').forEach(btn => {
+      // Attach import buttons across projects and Claude Code workspaces
+      document.querySelectorAll('#scan-projects-list .btn-import-scanned, #scan-claude-list .btn-import-scanned').forEach(btn => {
         btn.addEventListener('click', async () => {
           await fetch('/api/scan/import', {
             method: 'POST',
@@ -924,6 +1036,25 @@ document.addEventListener('DOMContentLoaded', () => {
   btnOpenCapture.addEventListener('click', () => {
     openModal(modalCapture);
   });
+
+  const btnCopyBookmarklet = document.getElementById('btn-copy-bookmarklet');
+  if (btnCopyBookmarklet) {
+    btnCopyBookmarklet.addEventListener('click', () => {
+      const code = `javascript:(function(){var u=encodeURIComponent(window.location.href);var t=encodeURIComponent(document.title);var w=540,h=400;var l=Math.round((screen.width-w)/2),top=Math.round((screen.height-h)/2);window.open('http://localhost:3456/capture?url='+u+'&title='+t,'OmniAICapture','width='+w+',height='+h+',left='+l+',top='+top);})();`;
+      navigator.clipboard.writeText(code);
+      showToast('📋 Copied bookmarklet code! Paste into a browser bookmark URL field.');
+    });
+  }
+
+  // Antigravity Pill click
+  const pillAntigravity = document.getElementById('pill-antigravity');
+  if (pillAntigravity) {
+    pillAntigravity.style.cursor = 'pointer';
+    pillAntigravity.addEventListener('click', () => {
+      switchView('fleet');
+      showToast('Switched to AI Fleet View: Google Antigravity');
+    });
+  }
 
   // Filter Event Listeners
   projectFilterStatus.addEventListener('change', renderProjects);

@@ -8,7 +8,7 @@ const { exec } = require('child_process');
 const app = express();
 const PORT = process.env.PORT || 3456;
 const DATA_DIR = path.join(__dirname, 'data');
-const DB_FILE = path.join(DATA_DIR, 'db.json');
+const DB_FILE = process.env.DB_FILE || path.join(DATA_DIR, 'db.json');
 const USER_HOME = os.homedir();
 
 app.use(cors());
@@ -16,8 +16,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+const dbDir = path.dirname(DB_FILE);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
 }
 
 // Initial seed data
@@ -282,6 +283,10 @@ const initialDb = {
 // Database helper functions
 function readDb() {
   try {
+    const dir = path.dirname(DB_FILE);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
     if (!fs.existsSync(DB_FILE)) {
       fs.writeFileSync(DB_FILE, JSON.stringify(initialDb, null, 2), 'utf8');
       return JSON.parse(JSON.stringify(initialDb));
@@ -301,6 +306,10 @@ function readDb() {
 
 function writeDb(data) {
   try {
+    const dir = path.dirname(DB_FILE);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
     return true;
   } catch (err) {
@@ -419,7 +428,8 @@ app.put('/api/projects/:id', (req, res) => {
 
   db.projects[index] = {
     ...db.projects[index],
-    ...req.body,
+    ...(req.body || {}),
+    id: db.projects[index].id,
     updatedAt: new Date().toISOString()
   };
 
@@ -485,7 +495,8 @@ app.put('/api/tasks/:id', (req, res) => {
 
   db.tasks[index] = {
     ...db.tasks[index],
-    ...req.body,
+    ...(req.body || {}),
+    id: db.tasks[index].id,
     updatedAt: new Date().toISOString()
   };
 
@@ -627,8 +638,167 @@ function formatAiName(ai) {
   }
 }
 
-// ------------------- QUICK CAPTURE API -------------------
-// Called by browser bookmarklet or frontend
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// ------------------- QUICK CAPTURE API & POPUP -------------------
+// GET /capture for browser bookmarklet popup (works on HTTPS pages without Mixed Content/CSP blocks)
+app.get('/capture', (req, res) => {
+  const { url, title, notes, projectId, ai: rawAi } = req.query;
+
+  if (!url && !title) {
+    return res.redirect('/?view=morning');
+  }
+
+  const db = readDb();
+
+  // Auto-detect AI platform from URL if not specified
+  let detectedAi = rawAi || 'claude';
+  if (url) {
+    const low = url.toLowerCase();
+    if (low.includes('claude.ai')) detectedAi = 'claude';
+    else if (low.includes('chatgpt.com') || low.includes('openai.com')) detectedAi = 'chatgpt';
+    else if (low.includes('grok.com') || low.includes('x.com/i/grok')) detectedAi = 'grok';
+    else if (low.includes('gemini.google.com') || low.includes('antigravity')) detectedAi = 'antigravity';
+  }
+
+  // Find or default project
+  let targetProjectId = projectId;
+  if (!targetProjectId && db.projects.length > 0) {
+    targetProjectId = db.projects[0].id;
+  }
+
+  const targetProject = (db.projects || []).find(p => p.id === targetProjectId);
+  const projectName = targetProject ? targetProject.name : 'General Project';
+
+  const session = {
+    id: `sess_${Date.now()}`,
+    projectId: targetProjectId,
+    title: title || `Chat on ${formatAiName(detectedAi)}`,
+    ai: detectedAi,
+    url: url || '',
+    notes: notes || 'Saved via Quick Capture Bookmarklet',
+    createdAt: new Date().toISOString()
+  };
+
+  db.sessions.push(session);
+  writeDb(db);
+
+  const aiColors = {
+    claude: '#d97706',
+    chatgpt: '#10a37f',
+    antigravity: '#3b82f6',
+    grok: '#e2e8f0',
+    human: '#a855f7'
+  };
+  const color = aiColors[detectedAi] || '#3b82f6';
+  const aiFormatted = formatAiName(detectedAi);
+
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OmniAI Hub - Captured</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #090d16;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .card {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+    .icon { font-size: 2.2rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin: 0.5rem 0 1rem 0;
+      background: ${color}22;
+      color: ${color};
+      border: 1px solid ${color}44;
+    }
+    .info {
+      background: #1f2937;
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      text-align: left;
+      font-size: 0.8rem;
+    }
+    .info-row { margin-bottom: 0.35rem; }
+    .info-label { color: #9ca3af; font-weight: 600; }
+    .actions { display: flex; gap: 0.5rem; justify-content: center; }
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      border: 1px solid transparent;
+    }
+    .btn-primary { background: #3b82f6; color: white; }
+    .btn-secondary { background: #374151; color: #d1d5db; }
+    .timer { margin-top: 0.75rem; font-size: 0.75rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">⚡</div>
+    <h2>Captured to OmniAI Hub</h2>
+    <div class="badge">${aiFormatted}</div>
+    <div class="info">
+      <div class="info-row"><span class="info-label">Title:</span> ${escapeHtml(session.title)}</div>
+      <div class="info-row"><span class="info-label">Project:</span> ${escapeHtml(projectName)}</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="window.close()">Close</button>
+      <a class="btn btn-primary" href="http://localhost:3456" target="_blank">Open Hub ↗</a>
+    </div>
+    <div class="timer">Auto-closing in <span id="sec">2</span>s...</div>
+  </div>
+  <script>
+    let left = 2;
+    const t = setInterval(() => {
+      left--;
+      const el = document.getElementById('sec');
+      if (el) el.textContent = left;
+      if (left <= 0) {
+        clearInterval(t);
+        window.close();
+      }
+    }, 1000);
+  </script>
+</body>
+</html>`);
+});
+
+// Called by JSON clients or frontend
 app.post('/api/capture', (req, res) => {
   const { title, url, notes, projectId, ai: rawAi } = req.body;
   const db = readDb();
@@ -713,10 +883,13 @@ app.get('/api/scan/local', (req, res) => {
       const items = fs.readdirSync(claudeBase, { withFileTypes: true });
       for (const item of items) {
         if (item.isDirectory()) {
+          const cleanName = item.name.replace(/^C--Users-[^-]+-Projects-?/, '').replace(/--/g, '/');
+          const isImported = existingNames.has(cleanName.toLowerCase()) || existingNames.has(item.name.toLowerCase());
           detected.claudeCodeProjects.push({
-            name: item.name.replace(/^C--Users-[^-]+-Projects-?/, '').replace(/--/g, '/'),
+            name: cleanName,
             rawName: item.name,
-            path: path.join(claudeBase, item.name)
+            path: path.join(claudeBase, item.name),
+            isImported
           });
         }
       }
@@ -784,12 +957,35 @@ app.get('/api/export', (req, res) => {
 
 // Launch server if run directly
 if (require.main === module) {
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`=======================================================`);
     console.log(`🚀 AI Project Organizer running at: http://localhost:${PORT}`);
     console.log(`   - Cross-AI Tracker: Claude, ChatGPT, Antigravity, Grok`);
     console.log(`   - Data store: ${DB_FILE}`);
     console.log(`=======================================================`);
+
+    if (process.argv.includes('--open') || process.env.OPEN_BROWSER === 'true') {
+      const openCmd = process.platform === 'win32'
+        ? `start http://localhost:${PORT}`
+        : process.platform === 'darwin'
+        ? `open http://localhost:${PORT}`
+        : `xdg-open http://localhost:${PORT}`;
+      exec(openCmd, (err) => {
+        if (err) console.error('Failed to open browser automatically:', err.message);
+      });
+    }
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`\n❌ Error: Port ${PORT} is already in use by another process.`);
+      console.error(`👉 If OmniAI Hub is already running, open http://localhost:${PORT} in your browser.`);
+      console.error(`👉 Or run on a custom port: PORT=3457 node server.js\n`);
+      process.exit(1);
+    } else {
+      console.error('Server error:', err);
+      process.exit(1);
+    }
   });
 }
 

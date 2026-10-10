@@ -16,8 +16,5 @@ if (-not (Test-Path "node_modules")) {
     npm install
 }
 
-Write-Host "Opening browser at http://localhost:3456..." -ForegroundColor Green
-Start-Process "http://localhost:3456"
-
-Write-Host "Starting Node server on port 3456..." -ForegroundColor Green
-node server.js
+Write-Host "Launching server and opening browser at http://localhost:3456..." -ForegroundColor Green
+node server.js --open

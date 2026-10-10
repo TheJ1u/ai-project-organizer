@@ -1,3 +1,12 @@
+const path = require('path');
+const fs = require('fs');
+
+const testDbPath = path.join(__dirname, 'test-db.json');
+process.env.DB_FILE = testDbPath;
+if (fs.existsSync(testDbPath)) {
+  try { fs.unlinkSync(testDbPath); } catch (e) {}
+}
+
 const http = require('http');
 const assert = require('assert');
 const app = require('../server');
@@ -164,6 +173,13 @@ async function runTests() {
     assert.strictEqual(captureRes.json.session.ai, 'grok', 'Capture should auto-detect Grok AI from URL');
     console.log('   ✓ POST /api/capture -> 201 Created (Auto-detected AI: grok)');
 
+    // 6b. Testing GET /capture popup endpoint (for browser bookmarklet)
+    const popupRes = await request(server, 'GET', '/capture?url=https%3A%2F%2Fclaude.ai%2Fchat%2Ftest123&title=TestClaudeChat');
+    assert.strictEqual(popupRes.status, 200, 'GET /capture should return 200');
+    assert(popupRes.data.includes('Captured to OmniAI Hub'), 'Popup should render success page');
+    assert(popupRes.data.includes('Claude (Anthropic)'), 'Popup should auto-detect Claude AI');
+    console.log('   ✓ GET /capture (Bookmarklet Popup) -> 200 OK (Rendered confirmation HTML)');
+
     // 7. Local Disk Scanner API
     console.log('\n7. Testing Local Disk Scanner:');
     const scanRes = await request(server, 'GET', '/api/scan/local');
@@ -226,6 +242,9 @@ async function runTests() {
     console.log('========================================\n');
   } finally {
     server.close();
+    if (fs.existsSync(testDbPath)) {
+      try { fs.unlinkSync(testDbPath); } catch (e) {}
+    }
   }
 }
 

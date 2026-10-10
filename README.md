@@ -128,15 +128,15 @@ To capture chat threads while browsing on Claude, ChatGPT, or Grok:
 2. Drag the **⚡ Quick-Add to AI Hub** button to your browser's Bookmarks Bar.
 3. *Alternatively*, create a new bookmark manually and set the URL to:
 ```javascript
-javascript:(function(){const title=document.title;const url=window.location.href;fetch('http://localhost:3456/api/capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,url,notes:'Saved via Bookmarklet'})}).then(r=>r.json()).then(d=>alert('⚡ Saved chat to OmniAI Hub!')).catch(e=>alert('Hub not reachable. Make sure it is running on localhost:3456'));})();
+javascript:(function(){var u=encodeURIComponent(window.location.href);var t=encodeURIComponent(document.title);var w=540,h=400;var l=Math.round((screen.width-w)/2),top=Math.round((screen.height-h)/2);window.open('http://localhost:3456/capture?url='+u+'&title='+t,'OmniAICapture','width='+w+',height='+h+',left='+l+',top='+top);})();
 ```
-4. Whenever you have an active chat session you want to remember, click the bookmark. It will automatically detect the AI provider and attach the link to your dashboard.
+4. Whenever you have an active chat session you want to remember, click the bookmark. A 2-second popup automatically captures the thread URL, auto-detects the AI platform, attaches it to your project, and closes — immune to browser HTTPS Mixed-Content or CSP restrictions!
 
 ---
 
 ## 🧪 Automated Testing & Verification
 
-An end-to-end integration test suite is included in `test/test-endpoints.js`. It validates all static assets, CRUD routes, search filters, context prompt handoff generators, local scanner paths, and backup exports against an ephemeral test server:
+An end-to-end integration test suite is included in `test/test-endpoints.js`. It runs with complete database isolation (`process.env.DB_FILE`), testing all static assets, CRUD routes, search filters, context prompt handoff generators, local scanner paths, popup capture endpoints, and backup exports:
 
 ```bash
 npm test
@@ -151,10 +151,13 @@ Expected output:
 4. Testing Tasks API: ✓
 5. Testing Cross-AI Handoff API: ✓
 6. Testing Quick Capture API: ✓
+   - POST /api/capture: ✓
+   - GET /capture (Bookmarklet Popup): ✓
 7. Testing Local Disk Scanner: ✓
 8. Testing Scan Import: ✓
 9. Testing Quick Notes API: ✓
 10. Testing Backup Export: ✓
+11. Cleaning Up Test Entities: ✓
 🎉 ALL INTEGRATION TESTS PASSED CLEANLY!
 ```
 

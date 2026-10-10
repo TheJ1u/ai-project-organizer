@@ -437,6 +437,7 @@
         </div>
 
         <div class="modal-footer">
+          <button type="button" class="btn btn-danger" id="btn-delete-project" style="display:none; margin-right: auto;">🗑️ Delete Project</button>
           <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
           <button type="submit" class="btn btn-primary">Save Project</button>
         </div>
@@ -666,15 +667,18 @@
 
         <div class="bookmarklet-zone">
           <p class="bookmarklet-prompt">👉 <strong>Drag this button to your Bookmarks Bar:</strong></p>
-          <a class="bookmarklet-btn" href="javascript:(function(){const title=document.title;const url=window.location.href;fetch('http://localhost:3456/api/capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,url,notes:'Saved via Bookmarklet'})}).then(r=>r.json()).then(d=>alert('⚡ Saved chat to OmniAI Hub!')).catch(e=>alert('Hub not reachable. Make sure it is running on localhost:3456'));})();" title="Drag to bookmarks bar">
+          <a class="bookmarklet-btn" href="javascript:(function(){var u=encodeURIComponent(window.location.href);var t=encodeURIComponent(document.title);var w=540,h=400;var l=Math.round((screen.width-w)/2),top=Math.round((screen.height-h)/2);window.open('http://localhost:3456/capture?url='+u+'&title='+t,'OmniAICapture','width='+w+',height='+h+',left='+l+',top='+top);})();" title="Drag to bookmarks bar">
             ⚡ Quick-Add to AI Hub
           </a>
+          <div style="margin-top: 0.75rem;">
+            <button type="button" class="btn btn-sm btn-secondary" id="btn-copy-bookmarklet">📋 Copy Bookmarklet Code</button>
+          </div>
         </div>
 
         <ol class="capture-steps">
-          <li>Drag the button above directly into your browser's bookmark bar.</li>
+          <li>Drag the button above directly into your browser's bookmark bar (or click "Copy Bookmarklet Code" to paste into a manual bookmark).</li>
           <li>Whenever you have a great conversation in Claude, ChatGPT, or Grok, click the bookmark.</li>
-          <li>It instantly logs the thread URL and title right into your morning dashboard!</li>
+          <li>A quick 2-second popup automatically logs the conversation title, auto-detects the AI platform, attaches it to your project, and closes — immune to browser HTTPS Mixed-Content or CSP blocks!</li>
         </ol>
       </div>
       <div class="modal-footer">

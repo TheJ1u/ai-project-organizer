@@ -11,9 +11,6 @@ if not exist node_modules (
     call npm install
 )
 
-echo Opening browser at http://localhost:3456...
-start "" http://localhost:3456
-
-echo Launching Express server on port 3456...
-node server.js
+echo Launching Express server and opening browser at http://localhost:3456...
+node server.js --open
 pause
