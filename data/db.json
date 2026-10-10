@@ -101,6 +101,125 @@
       },
       "createdAt": "2026-09-29T15:00:00.000Z",
       "updatedAt": "2026-10-08T16:00:00.000Z"
+    },
+    {
+      "id": "proj_1791651397881_alua",
+      "name": "ai-project-organizer",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\ai-project-organizer",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\ai-project-organizer",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_p75p",
+      "name": "All Ball Repos",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\All Ball Repos",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\All Ball Repos",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_yv2q",
+      "name": "desktop email",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\desktop email",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\desktop email",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_t0y1",
+      "name": "Insurance_CRM_Platform",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\Insurance_CRM_Platform",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\Insurance_CRM_Platform",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_i7qf",
+      "name": "Insurance_Website",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\Insurance_Website",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\Insurance_Website",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_wf1w",
+      "name": "Jordan Finance",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\Jordan Finance",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\Jordan Finance",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_thjo",
+      "name": "Moms_Woodworking",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\Moms_Woodworking",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\Moms_Woodworking",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
     }
   ],
   "tasks": [
@@ -246,6 +365,116 @@
       "priority": "medium",
       "createdAt": "2026-10-09T16:00:00.000Z",
       "updatedAt": "2026-10-09T19:30:00.000Z"
+    },
+    {
+      "id": "task_claude_1791651397881_8tdw",
+      "projectId": "proj_aiforlife",
+      "title": "Review and refine: 50bf5ba Add AI 101 for beginners, facilitator guid",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\ai-for-life.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_1xvl",
+      "projectId": "proj_1791651397881_alua",
+      "title": "Review and refine: f7f9fe9 docs: add GitHub Pages live badges, previe",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\ai-project-organizer.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_vx1k",
+      "projectId": "proj_1791651397881_p75p",
+      "title": "Code audit and modular architecture review for All Ball Repos",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\All Ball Repos.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_jrdc",
+      "projectId": "proj_1791651397881_yv2q",
+      "title": "Code audit and modular architecture review for desktop email",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\desktop email.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_309p",
+      "projectId": "proj_1791651397881_t0y1",
+      "title": "Review and refine: ae79555 Add SunFire partner API request email temp",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\Insurance_CRM_Platform.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_xax8",
+      "projectId": "proj_1791651397881_i7qf",
+      "title": "Review and refine: 51c316a Enlarge hero advisor photo to 128px on des",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\Insurance_Website.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_ua7c",
+      "projectId": "proj_1791651397881_wf1w",
+      "title": "Code audit and modular architecture review for Jordan Finance",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\Jordan Finance.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_7zj6",
+      "projectId": "proj_landscout",
+      "title": "Code audit and modular architecture review for LandScout",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\LandScout.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_03f7",
+      "projectId": "proj_momswoodworking",
+      "title": "Review and refine: bd03b62 Add serverless Cloudflare Worker for dynam",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\moms-woodworking-business.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_hfqq",
+      "projectId": "proj_1791651397881_thjo",
+      "title": "Review and refine: 201c6ec Build woodworking-for-literacy website: ha",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\Moms_Woodworking.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
     }
   ],
   "sessions": [
