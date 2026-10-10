@@ -1,6 +1,14 @@
-# ⚡ OmniAI Hub — AI Project & Task Organizer
+# OmniAI Hub
 
-> **A morning command dashboard and cross-AI orchestrator designed for managing multi-agent engineering across Claude, ChatGPT, Google Antigravity, and Grok.**
+[![live site](https://img.shields.io/badge/live%20site-open-6ee7b7)](https://thej1u.github.io/ai-project-organizer/)
+[![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen)](CONTRIBUTING.md)
+
+[![OmniAI Hub preview](assets/og-image.png)](https://thej1u.github.io/ai-project-organizer/)
+
+**Open the website: https://thej1u.github.io/ai-project-organizer/** (no account or install needed).
+
+A morning command dashboard and cross-AI orchestrator designed for managing multi-agent engineering across Claude, ChatGPT, Google Antigravity, and Grok. Built to track projects, synchronize in-flight tasks, run morning briefings, and verify real progress without AI hallucination.
 
 ---
 
