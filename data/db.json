@@ -249,6 +249,11 @@
   ],
   "quickNotes": [
     {
+      "id": "note_1791645678872",
+      "text": "🌅 Morning Briefing (Oct 10): 3 repo(s) committed, 0 Claude sessions, 5 Antigravity runs.",
+      "createdAt": "2026-10-10T15:21:18.872Z"
+    },
+    {
       "id": "note_1",
       "text": "Morning routine: Check Grok sentiment scan -> Review Claude code PRs -> Let Antigravity run test suites -> Use ChatGPT for customer replies.",
       "createdAt": "2026-10-09T21:00:00.000Z"

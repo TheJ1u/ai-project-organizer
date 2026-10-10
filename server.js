@@ -839,45 +839,96 @@ app.post('/api/capture', (req, res) => {
   });
 });
 
-// ------------------- LOCAL DISK SCANNER -------------------
-// Scans ~/Projects, Claude Code projects, and Google Antigravity sessions
+// ------------------- PUSH NOTIFICATIONS API -------------------
+app.post('/api/notify', (req, res) => {
+  const { title, message, topic, url } = req.body;
+  const targetTopic = topic || 'jordy-ai-hub';
+  const payload = message || 'OmniAI Hub Daily Alert';
+  const https = require('https');
+
+  const ntfyReq = https.request(`https://ntfy.sh/${encodeURIComponent(targetTopic)}`, {
+    method: 'POST',
+    headers: {
+      'Title': title || 'OmniAI Hub Morning Briefing',
+      'Priority': 'default',
+      'Tags': 'robot,zap',
+      'Click': url || 'https://thej1u.github.io/ai-project-organizer/'
+    }
+  }, (ntfyRes) => {
+    res.json({ success: true, status: ntfyRes.statusCode, topic: targetTopic });
+  });
+
+  ntfyReq.on('error', (err) => {
+    console.error('Notification dispatch error:', err.message);
+    res.json({ success: false, error: err.message, topic: targetTopic });
+  });
+
+  ntfyReq.write(payload);
+  ntfyReq.end();
+});
+
+// ------------------- LOCAL DISK SCANNER (MULTI-DIRECTORY) -------------------
+// Scans ~/Projects, ~/OneDrive/Desktop, ~/OneDrive/Insurance, Claude Code workspaces, and Antigravity sessions
 app.get('/api/scan/local', (req, res) => {
   const db = readDb();
   const existingDirs = new Set((db.projects || []).map(p => (p.directory || '').toLowerCase()));
   const existingNames = new Set((db.projects || []).map(p => p.name.toLowerCase()));
 
-  const projectsBase = path.join(USER_HOME, 'Projects');
+  // Search candidate root directories
+  const candidateRoots = [
+    { label: 'Projects Folder', path: path.join(USER_HOME, 'Projects') },
+    { label: 'OneDrive Desktop', path: path.join(USER_HOME, 'OneDrive', 'Desktop') },
+    { label: 'OneDrive Desktop/AI and Code', path: path.join(USER_HOME, 'OneDrive', 'Desktop', 'AI and Code') },
+    { label: 'OneDrive Insurance', path: path.join(USER_HOME, 'OneDrive', 'Insurance') },
+    { label: 'Standard Desktop', path: path.join(USER_HOME, 'Desktop') },
+    { label: 'OneDrive Documents', path: path.join(USER_HOME, 'OneDrive', 'Documents') }
+  ];
+
+  if (req.query.customPath && typeof req.query.customPath === 'string') {
+    candidateRoots.unshift({ label: 'Custom Directory', path: path.normalize(req.query.customPath.trim()) });
+  }
+
   const claudeBase = path.join(USER_HOME, '.claude', 'projects');
   const antigravityBase = path.join(USER_HOME, '.gemini', 'antigravity', 'brain');
 
   const detected = {
-    projectsDir: projectsBase,
+    projectsDir: path.join(USER_HOME, 'Projects'),
+    scannedRoots: [],
     foundProjects: [],
     claudeCodeProjects: [],
     antigravitySessions: []
   };
 
-  // 1. Scan Projects Directory
-  try {
-    if (fs.existsSync(projectsBase)) {
-      const items = fs.readdirSync(projectsBase, { withFileTypes: true });
-      for (const item of items) {
-        if (item.isDirectory() && !item.name.startsWith('.')) {
-          const fullPath = path.join(projectsBase, item.name);
-          const isImported = existingDirs.has(fullPath.toLowerCase()) || existingNames.has(item.name.toLowerCase());
-          detected.foundProjects.push({
-            name: item.name,
-            path: fullPath,
-            isImported
-          });
+  const seenPaths = new Set();
+
+  candidateRoots.forEach(root => {
+    if (fs.existsSync(root.path)) {
+      detected.scannedRoots.push(root.path);
+      try {
+        const items = fs.readdirSync(root.path, { withFileTypes: true });
+        for (const item of items) {
+          if (item.isDirectory() && !item.name.startsWith('.') && item.name !== 'node_modules') {
+            const fullPath = path.join(root.path, item.name);
+            const lowerPath = fullPath.toLowerCase();
+            if (!seenPaths.has(lowerPath)) {
+              seenPaths.add(lowerPath);
+              const isImported = existingDirs.has(lowerPath) || existingNames.has(item.name.toLowerCase());
+              detected.foundProjects.push({
+                name: item.name,
+                path: fullPath,
+                sourceLocation: root.label,
+                isImported
+              });
+            }
+          }
         }
+      } catch (err) {
+        console.error(`Scan error in ${root.path}:`, err.message);
       }
     }
-  } catch (err) {
-    console.error('Scan projects error:', err);
-  }
+  });
 
-  // 2. Scan Claude Code local projects
+  // Scan Claude Code local projects
   try {
     if (fs.existsSync(claudeBase)) {
       const items = fs.readdirSync(claudeBase, { withFileTypes: true });
@@ -895,10 +946,10 @@ app.get('/api/scan/local', (req, res) => {
       }
     }
   } catch (err) {
-    console.error('Scan Claude error:', err);
+    console.error('Scan Claude error:', err.message);
   }
 
-  // 3. Scan Google Antigravity sessions
+  // Scan Google Antigravity sessions
   try {
     if (fs.existsSync(antigravityBase)) {
       const items = fs.readdirSync(antigravityBase, { withFileTypes: true });
@@ -912,7 +963,7 @@ app.get('/api/scan/local', (req, res) => {
       }
     }
   } catch (err) {
-    console.error('Scan Antigravity error:', err);
+    console.error('Scan Antigravity error:', err.message);
   }
 
   res.json(detected);

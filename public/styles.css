@@ -1337,3 +1337,49 @@ input[type="text"]:focus, textarea:focus, select:focus {
   cursor: pointer;
 }
 
+/* Anti-Fabrication Prompts */
+.prompts-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.prompt-card {
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.15rem;
+  transition: all 0.2s ease;
+}
+
+.prompt-card.claude { border-left: 4px solid var(--claude-color); }
+.prompt-card.chatgpt { border-left: 4px solid var(--chatgpt-color); }
+.prompt-card.antigravity { border-left: 4px solid var(--antigravity-color); }
+.prompt-card.grok { border-left: 4px solid var(--grok-color); }
+
+.prompt-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.prompt-textarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #93c5fd;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+/* Custom Scan Row */
+.custom-scan-row input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+

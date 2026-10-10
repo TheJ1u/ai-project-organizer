@@ -522,6 +522,13 @@ if (isStaticHosted) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Register Service Worker for PWA & Push Notifications
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.log('ServiceWorker registration error:', err);
+    });
+  }
+
   // Global State
   let state = {
     projects: [],
@@ -547,6 +554,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalHandoff = document.getElementById('modal-handoff');
   const modalScanner = document.getElementById('modal-scanner');
   const modalCapture = document.getElementById('modal-capture');
+  const modalNotifications = document.getElementById('modal-notifications');
+  const modalPrompts = document.getElementById('modal-prompts');
 
   // Buttons
   const btnCreateProject = document.getElementById('btn-create-project');
@@ -555,6 +564,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnOpenHandoff2 = document.getElementById('btn-open-handoff-2');
   const btnOpenScanner = document.getElementById('btn-open-scanner');
   const btnOpenCapture = document.getElementById('btn-open-capture');
+  const btnOpenNotifications = document.getElementById('btn-open-notifications');
+  const btnOpenPrompts = document.getElementById('btn-open-prompts');
   const btnAddTaskMorning = document.getElementById('btn-add-task-morning');
   const btnAddFleetTask = document.getElementById('btn-add-fleet-task');
   const btnAddBoardTask = document.getElementById('btn-add-board-task');
@@ -1470,21 +1481,32 @@ document.addEventListener('DOMContentLoaded', () => {
     runLocalScan();
   });
 
-  document.getElementById('btn-rescan').addEventListener('click', runLocalScan);
+  document.getElementById('btn-rescan').addEventListener('click', () => runLocalScan());
 
-  async function runLocalScan() {
+  const btnScanCustomDir = document.getElementById('btn-scan-custom-dir');
+  if (btnScanCustomDir) {
+    btnScanCustomDir.addEventListener('click', () => {
+      const customPath = document.getElementById('input-custom-scan-dir').value.trim();
+      runLocalScan(customPath);
+    });
+  }
+
+  async function runLocalScan(customPath = null) {
     const statusText = document.getElementById('scan-status-text');
     const projList = document.getElementById('scan-projects-list');
     const claudeList = document.getElementById('scan-claude-list');
     const antigravityList = document.getElementById('scan-antigravity-list');
 
-    statusText.textContent = 'Scanning local disk...';
+    statusText.textContent = customPath ? `Scanning ${customPath}...` : 'Scanning local project directories...';
     projList.innerHTML = 'Scanning...';
     claudeList.innerHTML = 'Scanning...';
     antigravityList.innerHTML = 'Scanning...';
 
     try {
-      const res = await fetch('/api/scan/local');
+      const scanUrl = customPath 
+        ? `/api/scan/local?customPath=${encodeURIComponent(customPath)}` 
+        : '/api/scan/local';
+      const res = await fetch(scanUrl);
       const data = await res.json();
 
       statusText.innerHTML = `✅ Found <strong>${data.foundProjects.length}</strong> local folders, <strong>${data.claudeCodeProjects.length}</strong> Claude Code workspaces, and <strong>${data.antigravitySessions.length}</strong> Antigravity sessions.`;
@@ -1577,6 +1599,103 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Switched to AI Fleet View: Google Antigravity');
     });
   }
+
+  // ================= PHONE ALERTS & NOTIFICATIONS =================
+  if (btnOpenNotifications) {
+    btnOpenNotifications.addEventListener('click', () => {
+      updateWebPushStatus();
+      const savedTopic = localStorage.getItem('omni_ntfy_topic') || 'jordy-omni-ai-hub';
+      const topicInput = document.getElementById('ntfy-topic');
+      if (topicInput) topicInput.value = savedTopic;
+      const ntfyLink = document.getElementById('btn-open-ntfy-channel');
+      if (ntfyLink) ntfyLink.href = `https://ntfy.sh/${encodeURIComponent(savedTopic)}`;
+      openModal(modalNotifications);
+    });
+  }
+
+  function updateWebPushStatus() {
+    const el = document.getElementById('web-push-status');
+    if (!el) return;
+    if (!('Notification' in window)) {
+      el.textContent = 'Status: Web notifications not supported in this browser';
+      return;
+    }
+    el.textContent = `Status: ${Notification.permission === 'granted' ? '✅ Enabled' : Notification.permission === 'denied' ? '❌ Blocked' : '⚠️ Not enabled yet'}`;
+  }
+
+  const btnRequestWebPush = document.getElementById('btn-request-web-push');
+  if (btnRequestWebPush) {
+    btnRequestWebPush.addEventListener('click', async () => {
+      if (!('Notification' in window)) {
+        showToast('Notifications not supported in this browser');
+        return;
+      }
+      const perm = await Notification.requestPermission();
+      updateWebPushStatus();
+      if (perm === 'granted') {
+        showToast('✅ Browser notifications enabled!');
+        try {
+          new Notification('OmniAI Hub Alert', {
+            body: 'Notifications are now connected to your device.',
+            icon: './icon.svg'
+          });
+        } catch (e) {}
+      } else {
+        showToast('Permission ' + perm);
+      }
+    });
+  }
+
+  const btnSaveNtfyTopic = document.getElementById('btn-save-ntfy-topic');
+  if (btnSaveNtfyTopic) {
+    btnSaveNtfyTopic.addEventListener('click', () => {
+      const topic = document.getElementById('ntfy-topic').value.trim() || 'jordy-omni-ai-hub';
+      localStorage.setItem('omni_ntfy_topic', topic);
+      showToast(`Saved channel topic: ${topic}`);
+      const link = document.getElementById('btn-open-ntfy-channel');
+      if (link) link.href = `https://ntfy.sh/${encodeURIComponent(topic)}`;
+    });
+  }
+
+  const btnTestPhonePush = document.getElementById('btn-test-phone-push');
+  if (btnTestPhonePush) {
+    btnTestPhonePush.addEventListener('click', async () => {
+      const topic = document.getElementById('ntfy-topic').value.trim() || 'jordy-omni-ai-hub';
+      showToast('Sending test alert to phone...');
+      try {
+        await fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            topic,
+            title: 'OmniAI Hub Phone Alert',
+            message: '⚡ Good morning Jordan! Your OmniAI Hub daily tracker is active.'
+          })
+        });
+        showToast(`✅ Alert dispatched to phone via ntfy.sh/${topic}!`);
+      } catch (e) {
+        showToast('Failed to dispatch alert');
+      }
+    });
+  }
+
+  // ================= ANTI-FABRICATION PROMPTS =================
+  if (btnOpenPrompts) {
+    btnOpenPrompts.addEventListener('click', () => {
+      openModal(modalPrompts);
+    });
+  }
+
+  document.querySelectorAll('.btn-copy-prompt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.target;
+      const el = document.getElementById(targetId);
+      if (el) {
+        navigator.clipboard.writeText(el.value);
+        showToast('📋 Copied anti-fabrication prompt to clipboard!');
+      }
+    });
+  });
 
   // Filter Event Listeners
   projectFilterStatus.addEventListener('change', renderProjects);

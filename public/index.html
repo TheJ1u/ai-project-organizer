@@ -7,6 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82f6">
+  <link rel="apple-touch-icon" href="icon.svg">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -47,6 +50,12 @@
         </div>
 
         <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-open-prompts" title="Anti-Fabrication Prompts for Claude, ChatGPT, Grok">
+            <span class="btn-icon">🛡️</span> AI Prompts
+          </button>
+          <button class="btn btn-secondary" id="btn-open-notifications" title="Phone Alerts & Push Notification Setup">
+            <span class="btn-icon">🔔</span> Phone Alerts
+          </button>
           <button class="btn btn-secondary" id="btn-open-scanner" title="Scan local directories & AI sessions">
             <span class="btn-icon">🔄</span> Scan Local
           </button>
@@ -632,10 +641,15 @@
           <button class="btn btn-sm btn-secondary" id="btn-rescan">Re-Scan Disk</button>
         </div>
 
+        <div class="custom-scan-row" style="margin-bottom: 1rem; display: flex; gap: 0.5rem;">
+          <input type="text" id="input-custom-scan-dir" placeholder="Scan custom directory (e.g. C:\Users\jordy\OneDrive\Desktop)..." style="flex: 1; padding: 0.5rem 0.75rem; background: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: white;">
+          <button class="btn btn-secondary" id="btn-scan-custom-dir">Scan Folder</button>
+        </div>
+
         <div class="scanner-sections">
           <!-- Found Local Projects -->
           <div class="scan-section">
-            <h4 class="scan-section-title">📁 Projects in <code>C:\Users\jordy\Projects</code></h4>
+            <h4 class="scan-section-title">📁 Detected Project Repositories</h4>
             <div class="scan-list" id="scan-projects-list">Loading...</div>
           </div>
 
@@ -681,6 +695,203 @@
           <li>A quick 2-second popup automatically logs the conversation title, auto-detects the AI platform, attaches it to your project, and closes — immune to browser HTTPS Mixed-Content or CSP blocks!</li>
         </ol>
       </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Phone Alerts & Push Notifications -->
+  <div class="modal-overlay" id="modal-notifications">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">🔔 Phone Alerts & Push Notifications</h2>
+          <p class="modal-sub">Receive your morning briefing and in-flight AI updates right on your iPhone or Android phone.</p>
+        </div>
+        <button class="btn-close-modal">&times;</button>
+      </div>
+      
+      <div class="notification-setup-grid">
+        <!-- Option 1: Instant Phone Push via NTFY (Zero setup, 100% free) -->
+        <div class="card" style="margin-bottom: 1rem; border-color: rgba(59, 130, 246, 0.4);">
+          <div class="card-header">
+            <h3 class="card-title">📲 1. Instant Phone Push (Works when phone is locked & browser closed)</h3>
+            <span class="ai-badge antigravity">Recommended</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            Powered by <strong>ntfy.sh</strong> — a free, open-source notification system. No account or password needed!
+          </p>
+          <div class="form-group">
+            <label for="ntfy-topic">Your Private Phone Notification Channel Topic:</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="text" id="ntfy-topic" value="jordy-omni-ai-hub" placeholder="e.g. jordy-omni-ai-hub" style="flex: 1;">
+              <button class="btn btn-primary" id="btn-save-ntfy-topic">Save Channel</button>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary" id="btn-test-phone-push">🚀 Send Test Alert to Phone</button>
+            <a href="https://ntfy.sh/jordy-omni-ai-hub" target="_blank" rel="noreferrer" class="btn btn-secondary" id="btn-open-ntfy-channel">
+              📱 Open Channel in Browser / App ↗
+            </a>
+          </div>
+          <div style="background: var(--bg-sidebar); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.85rem; margin-top: 1rem; font-size: 0.8rem; color: var(--text-secondary);">
+            <strong>How to get it on your phone:</strong>
+            <ol style="margin-left: 1.25rem; margin-top: 0.35rem; display: flex; flex-direction: column; gap: 0.25rem;">
+              <li>Install the free <strong>ntfy</strong> app from the iOS App Store or Google Play Store.</li>
+              <li>Tap <strong>+ Subscribe to topic</strong> and enter your channel topic name (e.g. <code>jordy-omni-ai-hub</code>).</li>
+              <li>That's it! Every morning when the briefing script runs, your phone will buzz with the update!</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Option 2: Browser Web Push / PWA -->
+        <div class="card" style="margin-bottom: 0;">
+          <div class="card-header">
+            <h3 class="card-title">💻 2. Browser Web Notifications</h3>
+            <span class="ai-badge claude">Web / PWA</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            Enable native desktop/browser notifications when this tab is open or installed on your phone home screen.
+          </p>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <button class="btn btn-primary" id="btn-request-web-push">🔔 Enable Browser Notifications</button>
+            <span id="web-push-status" style="font-size: 0.8rem; color: var(--text-muted);">Status: Checking permission...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Anti-Fabrication Prompts -->
+  <div class="modal-overlay" id="modal-prompts">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">🛡️ Anti-Fabrication AI Prompts & Instructions</h2>
+          <p class="modal-sub">Battle-tested system instructions for Claude, ChatGPT, Grok, and Antigravity that force verifiable, non-hallucinatory updates.</p>
+        </div>
+        <button class="btn-close-modal">&times;</button>
+      </div>
+
+      <div class="prompts-accordion">
+        <!-- Claude Grounded Sync -->
+        <div class="prompt-card claude">
+          <div class="prompt-card-header">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="ai-avatar claude">🟣</span>
+              <div>
+                <h4 style="font-size: 0.95rem; font-weight: 700;">Claude (Anthropic) — Verifiable Code Protocol</h4>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Paste in Claude Project Custom Instructions</span>
+              </div>
+            </div>
+            <button class="btn btn-xs btn-primary btn-copy-prompt" data-target="prompt-claude-text">📋 Copy Prompt</button>
+          </div>
+          <textarea id="prompt-claude-text" class="prompt-textarea" readonly rows="6">You are an engineering partner following the VERIFIABLE CODE REPORTING PROTOCOL.
+
+ANTI-HALLUCINATION RULES:
+1. NEVER claim a feature or refactor is "COMPLETED" unless you have provided the complete code or verified that the test/build passed without errors.
+2. If code was drafted but not yet run or tested, mark status explicitly as [IN PROGRESS - UNTESTED].
+3. For any architectural decision, cite the exact file name and method changed.
+4. When concluding a session or when asked to "sync", output this exact block:
+
+### ⚡ OMNIAI SYNC BLOCK
+- **Project:** [Project Name]
+- **AI Worker:** Claude
+- **Status:** [ACTIVE | IN_PROGRESS | BLOCKED]
+- **Verified Deliverables:** (List files edited with lines/functions)
+- **Active Blockers / Edge Cases:** (List any unverified assumptions)
+- **Next 2 Tasks:**
+  1. [Next concrete technical task]
+  2. [Next test / review task]</textarea>
+        </div>
+
+        <!-- ChatGPT Grounded Sync -->
+        <div class="prompt-card chatgpt" style="margin-top: 1rem;">
+          <div class="prompt-card-header">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="ai-avatar chatgpt">🟢</span>
+              <div>
+                <h4 style="font-size: 0.95rem; font-weight: 700;">ChatGPT (OpenAI) — Grounded Copy & Product Protocol</h4>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Paste in Custom Instructions ("How would you like ChatGPT to respond?")</span>
+              </div>
+            </div>
+            <button class="btn btn-xs btn-primary btn-copy-prompt" data-target="prompt-chatgpt-text">📋 Copy Prompt</button>
+          </div>
+          <textarea id="prompt-chatgpt-text" class="prompt-textarea" readonly rows="6">You are a product & marketing co-founder adhering to the GROUNDED ASSET PROTOCOL.
+
+ANTI-HALLUCINATION CONSTRAINTS:
+1. Do not state that a deliverable is "done" until the complete copy, documentation, or sequence is written out in full (no placeholders like "insert text here").
+2. Explicitly distinguish between IDEAS vs FINAL ASSETS.
+3. At the end of every productive turn or when asked "sync", produce this report:
+
+### ⚡ OMNIAI SYNC BLOCK
+- **Project:** [Project Name]
+- **AI Worker:** ChatGPT
+- **Status:** [IN_PROGRESS | COMPLETED | REVIEW]
+- **Written Deliverables:** (Exact copy/specs completed in this chat)
+- **Pending Decisions:** (Open choices Jordy needs to confirm)
+- **Next 2 Tasks:**
+  1. [Next copy or strategy task]
+  2. [Review or deployment task]</textarea>
+        </div>
+
+        <!-- Grok Grounded Sync -->
+        <div class="prompt-card grok" style="margin-top: 1rem;">
+          <div class="prompt-card-header">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="ai-avatar grok">⚪</span>
+              <div>
+                <h4 style="font-size: 0.95rem; font-weight: 700;">Grok (xAI) — Cited Intel & Trend Protocol</h4>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Paste into Grok system prompt or beginning of research chat</span>
+              </div>
+            </div>
+            <button class="btn btn-xs btn-primary btn-copy-prompt" data-target="prompt-grok-text">📋 Copy Prompt</button>
+          </div>
+          <textarea id="prompt-grok-text" class="prompt-textarea" readonly rows="6">You are an intelligence researcher operating under the FACT-GROUNDED CITATION PROTOCOL.
+
+ANTI-HALLUCINATION RULES:
+1. Every market trend, pricing estimate, competitor claim, or news item MUST include a verifiable source link, publication date, or active post reference.
+2. If data is speculative or trending sentiment on X, state: [SENTIMENT ESTIMATE - UNVERIFIED].
+3. Summarize every research turn with this block:
+
+### ⚡ OMNIAI SYNC BLOCK
+- **Project:** [Project Name]
+- **AI Worker:** Grok
+- **Status:** [RESEARCH_COMPLETE | IN_PROGRESS]
+- **Verified Facts & Citations:** (Bullet points with URLs/sources)
+- **Uncertainties / Rumors:** (Items requiring further fact-checking)
+- **Next 2 Tasks:**
+  1. [Next deep-dive query]
+  2. [Actionable next step based on findings]</textarea>
+        </div>
+
+        <!-- Google Antigravity Grounded Sync -->
+        <div class="prompt-card antigravity" style="margin-top: 1rem;">
+          <div class="prompt-card-header">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="ai-avatar antigravity">🔵</span>
+              <div>
+                <h4 style="font-size: 0.95rem; font-weight: 700;">Google Antigravity — Autonomous Execution Protocol</h4>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Used in morning scheduled cron & autonomous runs</span>
+              </div>
+            </div>
+            <button class="btn btn-xs btn-primary btn-copy-prompt" data-target="prompt-antigravity-text">📋 Copy Prompt</button>
+          </div>
+          <textarea id="prompt-antigravity-text" class="prompt-textarea" readonly rows="6">Perform autonomous execution strictly verified against disk and git telemetry.
+
+EXECUTION GROUNDING:
+1. Verify all code changes with `git status` and test execution commands.
+2. If tests fail or commands exit with non-zero code, categorize as BLOCKED with the exact stderr output.
+3. Only log tasks as COMPLETED when execution and syntax checks succeed.
+4. Auto-update OmniAI Hub via local database or POST /api/tasks.</textarea>
+        </div>
+      </div>
+
       <div class="modal-footer">
         <button class="btn btn-secondary btn-cancel">Close</button>
       </div>

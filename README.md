@@ -50,14 +50,31 @@ OmniAI Hub provides a central mission control dashboard that you can open every 
 - Transfers executive summary, project status, working directory, completed items, active blockers, and immediate objectives.
 - Includes a 1-click "Copy Prompt" button and direct link to launch the target AI web app or local tool.
 
-### 6. 🔄 Local Disk & AI Session Auto-Scanner
+### 6. 🔄 Multi-Directory Disk & AI Session Auto-Scanner
 - Scans `C:\Users\jordy\Projects` to discover existing local repositories on your computer.
+- Scans `C:\Users\jordy\OneDrive\Desktop`, `OneDrive\Insurance`, and custom folders.
 - Scans `~/.claude/projects` to detect local Claude Code workspaces.
 - Scans `~/.gemini/antigravity/brain` to detect autonomous Antigravity agent sessions.
 - 1-click "+ Track" button to import any detected folder directly into your dashboard.
 
 ### 7. 📥 1-Click Browser Quick-Capture Bookmarklet
 - Drag the bookmarklet button to your browser bookmarks bar.
+- While browsing [Claude.ai](https://claude.ai), [ChatGPT](https://chatgpt.com), or [Grok](https://grok.com), click the bookmarklet to immediately log the conversation URL, title, and auto-detected AI into your morning hub.
+
+### 8. 🔔 Phone Alerts & Web Push Notifications (PWA)
+- Installable on iPhone (Safari "Add to Home Screen") and Android (Chrome) as a Progressive Web App (PWA).
+- Free instant phone notifications powered by **ntfy.sh**: your morning briefing script buzzes your phone every morning, even when your PC browser is closed or your phone is locked.
+- Native browser web notifications support.
+
+### 9. 🛡️ Anti-Fabrication Grounded Prompts
+- Pre-engineered, battle-tested system instructions for Claude, ChatGPT, Grok, and Antigravity.
+- Enforces strict evidence-based reporting (must cite exact file paths, commit hashes, or live URLs).
+- Prohibits hallucinating planned features as "completed".
+
+### 10. 🌅 Scheduled Morning Intelligence Script
+- Run `node scripts/morning-briefing.js` or `.\scripts\morning-briefing.ps1` automatically via Windows Task Scheduler or Antigravity Automation.
+- Inspects real git commits across all your project folders in the last 24 hours.
+- Pushes the morning briefing directly to your phone.
 - While browsing [Claude.ai](https://claude.ai), [ChatGPT](https://chatgpt.com), or [Grok](https://grok.com), click the bookmarklet to immediately log the conversation URL, title, and auto-detected AI into your morning hub.
 
 ### 8. 💾 Zero-Config Persistent Storage & Backup
