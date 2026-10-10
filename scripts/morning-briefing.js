@@ -104,11 +104,19 @@ gitActivity.forEach(g => {
 console.log(`- Active Claude Code workspaces (last 24h): ${recentClaudeWorkspaces}`);
 console.log(`- Active Antigravity sessions (last 24h): ${recentAntigravitySessions}`);
 
-// 5. Update local database quick note with morning briefing
+// 5. Update local database quick note with morning briefing & read latest AI Daily Watch
+let dailyWatchHighlight = '';
 if (fs.existsSync(DB_FILE)) {
   try {
     const db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
     if (!db.quickNotes) db.quickNotes = [];
+
+    // Check for recent AI Daily Watch note
+    const watchNote = db.quickNotes.find(n => n.text && n.text.includes('AI Daily Watch'));
+    if (watchNote) {
+      dailyWatchHighlight = watchNote.text.replace(/^📰 AI Daily Watch \([^)]+\):\s*/, '').trim();
+    }
+
     const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     const note = {
       id: `note_${Date.now()}`,
@@ -124,9 +132,17 @@ if (fs.existsSync(DB_FILE)) {
 }
 
 // 6. Push Notification to Phone via NTFY
-const summaryMessage = gitActivity.length > 0 
+let summaryMessage = gitActivity.length > 0 
   ? `Good morning Jordan! Active work on ${gitActivity.map(g => g.project).join(', ')}. ${recentClaudeWorkspaces} Claude sessions active.`
   : `Good morning Jordan! 0 commits in last 24h. Your AI Fleet is ready for today's tasks.`;
+
+if (dailyWatchHighlight) {
+  // Truncate to reasonable notification length if needed
+  const shortHighlight = dailyWatchHighlight.length > 140 
+    ? dailyWatchHighlight.substring(0, 137) + '...'
+    : dailyWatchHighlight;
+  summaryMessage += `\n\n📰 AI Watch: ${shortHighlight}`;
+}
 
 console.log(`\n📲 Dispatching phone notification to topic "${NTFY_TOPIC}"...`);
 

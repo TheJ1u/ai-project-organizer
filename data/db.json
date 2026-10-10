@@ -1,6 +1,23 @@
 {
   "projects": [
     {
+      "id": "proj_aidailywatch",
+      "name": "AI Daily Watch",
+      "description": "Daily curated intelligence briefing for Jordan (IS student in Utah). Tracks 7 pillars: frontier AI, Utah policy & sandbox, science, workforce shifts, new models, Silicon Slopes tech, and compute infrastructure.",
+      "status": "active",
+      "priority": "high",
+      "category": "Intelligence & Research",
+      "directory": "C:\\Users\\jordy\\Projects\\ai-project-organizer\\data\\daily-watch",
+      "aiRoles": {
+        "claude": "Deep synthesis, IS student career takeaways, and curriculum connections",
+        "grok": "Live web & X trend research across 7 news pillars",
+        "antigravity": "Automated morning script runner, archive generation, and phone push",
+        "chatgpt": "Executive summary drafting and formatting for email/newsletters"
+      },
+      "createdAt": "2026-10-10T10:40:00.000Z",
+      "updatedAt": "2026-10-10T10:40:00.000Z"
+    },
+    {
       "id": "proj_massmailer",
       "name": "MassMailer",
       "description": "High-volume email outreach automation system with SMTP rotation and deliverability tracking.",
@@ -87,6 +104,28 @@
     }
   ],
   "tasks": [
+    {
+      "id": "task_dailywatch_1",
+      "projectId": "proj_aidailywatch",
+      "title": "Compile AI Daily Watch edition for October 10, 2026",
+      "description": "Researched 7 pillars: Claude Haiku 5.5, Utah Gov Cox Pro-Human AI Order, Utah OAIP Health Sandbox, $1.8B Biohub, FLUX.3, $5M Utah AI Moonshot deadline Oct 15.",
+      "assignedAi": "antigravity",
+      "status": "completed",
+      "priority": "high",
+      "createdAt": "2026-10-10T10:40:00.000Z",
+      "updatedAt": "2026-10-10T10:41:00.000Z"
+    },
+    {
+      "id": "task_dailywatch_2",
+      "projectId": "proj_aidailywatch",
+      "title": "Automate daily watch runner into 7:30 AM morning briefing script",
+      "description": "Integrate daily watch digest into morning push alerts and scratchpad.",
+      "assignedAi": "claude",
+      "status": "completed",
+      "priority": "medium",
+      "createdAt": "2026-10-10T10:40:00.000Z",
+      "updatedAt": "2026-10-10T10:41:00.000Z"
+    },
     {
       "id": "task_1",
       "projectId": "proj_massmailer",
@@ -248,6 +287,16 @@
     }
   ],
   "quickNotes": [
+    {
+      "id": "note_1791650582703",
+      "text": "🌅 Morning Briefing (Oct 10): 3 repo(s) committed, 0 Claude sessions, 5 Antigravity runs.",
+      "createdAt": "2026-10-10T16:43:02.703Z"
+    },
+    {
+      "id": "note_dailywatch_oct10",
+      "text": "📰 AI Daily Watch (Oct 10): Claude Haiku 5.5 released (75% cheaper coding); Utah Gov Cox signed Pro-Human AI Executive Order expanding OAIP Health Sandbox; Utah $5M AI Moonshot applications close Oct 15.",
+      "createdAt": "2026-10-10T10:41:00.000Z"
+    },
     {
       "id": "note_1791645678872",
       "text": "🌅 Morning Briefing (Oct 10): 3 repo(s) committed, 0 Claude sessions, 5 Antigravity runs.",
