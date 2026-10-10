@@ -227,8 +227,41 @@ async function runTests() {
     assert(exportRes.json.projects && exportRes.json.tasks);
     console.log('   ✓ GET /api/export -> 200 OK (Full database backup JSON)');
 
-    // 11. Cleanup test task & test project
-    console.log('\n11. Cleaning Up Test Entities:');
+    // 11. Git Telemetry API
+    console.log('\n11. Testing Git Telemetry API:');
+    const telemRes = await request(server, 'GET', '/api/telemetry/git');
+    assert.strictEqual(telemRes.status, 200);
+    assert(telemRes.json && Array.isArray(telemRes.json.repos));
+    console.log(`   ✓ GET /api/telemetry/git -> 200 OK (${telemRes.json.repos.length} repos scanned)`);
+
+    // 12. Executive Markdown Briefing Export
+    console.log('\n12. Testing Executive Markdown Briefing:');
+    const mdRes = await request(server, 'GET', '/api/export/markdown');
+    assert.strictEqual(mdRes.status, 200);
+    assert(mdRes.headers['content-type'].includes('text/markdown'));
+    assert(mdRes.data.includes('OmniAI Hub — Executive Morning Briefing'));
+    console.log('   ✓ GET /api/export/markdown -> 200 OK (OmniAI-Briefing.md)');
+
+    // 13. PROJECT_STATE.md Exporter
+    console.log('\n13. Testing PROJECT_STATE.md Exporter:');
+    const stateRes = await request(server, 'POST', `/api/projects/${testProjId}/export-state`);
+    assert.strictEqual(stateRes.status, 200);
+    assert(stateRes.json.content.includes('PROJECT_STATE'));
+    console.log('   ✓ POST /api/projects/:id/export-state -> 200 OK');
+
+    // 14. Notification Dispatch API
+    console.log('\n14. Testing Notification Dispatch:');
+    const notifyRes = await request(server, 'POST', '/api/notify', {
+      topic: 'test-topic-ci',
+      title: 'Test Alert',
+      message: 'Automated test notification'
+    });
+    assert.strictEqual(notifyRes.status, 200);
+    assert.strictEqual(notifyRes.json.success, true);
+    console.log('   ✓ POST /api/notify -> 200 OK');
+
+    // 15. Cleanup test task & test project
+    console.log('\n15. Cleaning Up Test Entities:');
     const delTask = await request(server, 'DELETE', `/api/tasks/${testTaskId}`);
     assert.strictEqual(delTask.status, 200);
     console.log(`   ✓ DELETE /api/tasks/${testTaskId} -> 200 OK`);

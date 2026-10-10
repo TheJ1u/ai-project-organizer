@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "omniai-hub": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\jordy\\Projects\\ai-project-organizer\\mcp-server\\index.js"
+      ],
+      "env": {
+        "DB_FILE": "C:\\Users\\jordy\\Projects\\ai-project-organizer\\data\\db.json"
+      }
+    }
+  }
+}

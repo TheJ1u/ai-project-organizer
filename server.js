@@ -3,7 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 3456;
@@ -998,7 +998,176 @@ app.post('/api/scan/import', (req, res) => {
   res.status(201).json(newProj);
 });
 
-// Export / Backup
+// ------------------- GIT TELEMETRY & VERIFIED COMMITS -------------------
+app.get('/api/telemetry/git', (req, res) => {
+  const candidateRoots = [
+    path.join(USER_HOME, 'Projects'),
+    path.join(USER_HOME, 'OneDrive', 'Desktop'),
+    path.join(USER_HOME, 'OneDrive', 'Desktop', 'AI and Code'),
+    path.join(USER_HOME, 'OneDrive', 'Insurance'),
+    path.join(USER_HOME, 'Desktop')
+  ];
+
+  if (req.query.customPath && typeof req.query.customPath === 'string') {
+    candidateRoots.unshift(path.normalize(req.query.customPath.trim()));
+  }
+
+  const projectCommits = [];
+  const seenPaths = new Set();
+
+  candidateRoots.forEach(root => {
+    if (fs.existsSync(root)) {
+      try {
+        const items = fs.readdirSync(root, { withFileTypes: true });
+        for (const item of items) {
+          if (item.isDirectory() && !item.name.startsWith('.') && item.name !== 'node_modules') {
+            const repoPath = path.join(root, item.name);
+            const lower = repoPath.toLowerCase();
+            if (seenPaths.has(lower)) continue;
+            seenPaths.add(lower);
+
+            const gitDir = path.join(repoPath, '.git');
+            if (fs.existsSync(gitDir)) {
+              try {
+                let branch = 'main';
+                try {
+                  branch = execSync('git rev-parse --abbrev-ref HEAD', { cwd: repoPath, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+                } catch (e) {}
+
+                const rawLog = execSync('git log -n 5 --pretty=format:"%h|%an|%ar|%s|%at"', { cwd: repoPath, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+                if (rawLog) {
+                  const commits = rawLog.split('\n').filter(Boolean).map(line => {
+                    const [hash, author, relativeTime, message, timestamp] = line.split('|');
+                    return { hash, author, relativeTime, message, timestamp: parseInt(timestamp, 10) * 1000 };
+                  });
+
+                  projectCommits.push({
+                    projectName: item.name,
+                    repoPath,
+                    branch,
+                    commits,
+                    latestTimestamp: commits[0]?.timestamp || 0
+                  });
+                }
+              } catch (e) {}
+            }
+          }
+        }
+      } catch (e) {}
+    }
+  });
+
+  projectCommits.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
+
+  res.json({
+    totalTrackedRepos: projectCommits.length,
+    repos: projectCommits
+  });
+});
+
+// ------------------- EXPORT PROJECT_STATE.md TO DISK -------------------
+app.post('/api/projects/:id/export-state', (req, res) => {
+  const db = readDb();
+  const project = (db.projects || []).find(p => p.id === req.params.id);
+  if (!project) return res.status(404).json({ error: 'Project not found' });
+
+  const tasks = (db.tasks || []).filter(t => t.projectId === project.id);
+  const sessions = (db.sessions || []).filter(s => s.projectId === project.id);
+
+  const completed = tasks.filter(t => t.status === 'completed');
+  const inProgress = tasks.filter(t => t.status === 'in_progress');
+  const todo = tasks.filter(t => t.status === 'todo');
+
+  const content = `# ⚡ PROJECT_STATE: ${project.name}
+> Last Synced: ${new Date().toISOString()} | Status: ${project.status.toUpperCase()} | Priority: ${project.priority.toUpperCase()}
+
+## 🎯 Executive Objective
+${project.description || 'No description provided.'}
+
+## 🤖 Assigned AI Specializations
+- **Claude:** ${project.aiRoles?.claude || 'Architecture, code refinement & deep logic'}
+- **ChatGPT:** ${project.aiRoles?.chatgpt || 'Copywriting, customer communication & documentation'}
+- **Google Antigravity:** ${project.aiRoles?.antigravity || 'Autonomous test runner & directory operations'}
+- **Grok:** ${project.aiRoles?.grok || 'Live web research, market pulse & reality checks'}
+
+---
+
+## 📋 Task Matrix
+
+### 🔄 In-Progress / AI Working
+${inProgress.length ? inProgress.map(t => `- [ ] **${t.title}** (${formatAiName(t.assignedAi)}): ${t.description || 'No extra info'}`).join('\n') : '- No active tasks.'}
+
+### ⏳ Backlog
+${todo.length ? todo.map(t => `- [ ] **${t.title}** (${formatAiName(t.assignedAi)}): ${t.description || 'Queued'}`).join('\n') : '- Backlog is clear.'}
+
+### ✅ Completed & Verified
+${completed.length ? completed.map(t => `- [x] **${t.title}** (${formatAiName(t.assignedAi)}): ${t.description || 'Completed'}`).join('\n') : '- None marked complete yet.'}
+
+---
+
+## 🔗 Active Chat Threads & Resources
+${sessions.length ? sessions.map(s => `- [${formatAiName(s.ai)}] ${s.title}: ${s.url}`).join('\n') : '- No threads logged.'}
+
+---
+
+## 🛡️ Working Instructions for Entering Agents
+1. Before modifying code, verify current state against \`git status\`.
+2. Do NOT hallucinate completed features. Only mark tasks as completed when verified by execution or test exit code 0.
+3. Update this \`PROJECT_STATE.md\` or run \`OmniAI Hub\` sync at the conclusion of your session.
+`;
+
+  let writtenPath = null;
+  if (project.directory && fs.existsSync(project.directory)) {
+    try {
+      writtenPath = path.join(project.directory, 'PROJECT_STATE.md');
+      fs.writeFileSync(writtenPath, content, 'utf8');
+    } catch (e) {
+      console.error('Failed to write state file to directory:', e.message);
+    }
+  }
+
+  res.json({
+    success: true,
+    projectId: project.id,
+    projectName: project.name,
+    writtenPath,
+    content
+  });
+});
+
+// ------------------- EXPORT EXECUTIVE MARKDOWN -------------------
+app.get('/api/export/markdown', (req, res) => {
+  const db = readDb();
+  const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  let md = `# ⚡ OmniAI Hub — Executive Morning Briefing\n`;
+  md += `**Date:** ${dateStr}\n\n`;
+  md += `## 🚀 Active Projects (${db.projects.length})\n\n`;
+
+  (db.projects || []).forEach(p => {
+    const pTasks = (db.tasks || []).filter(t => t.projectId === p.id);
+    md += `### ${p.name} [${p.status.toUpperCase()} | Priority: ${p.priority.toUpperCase()}]\n`;
+    md += `- **Category:** ${p.category || 'General'}\n`;
+    md += `- **Objective:** ${p.description || 'N/A'}\n`;
+    if (p.directory) md += `- **Directory:** \`${p.directory}\`\n`;
+    md += `- **AI Roles:**\n`;
+    md += `  * Claude: ${p.aiRoles?.claude || 'Architecture'}\n`;
+    md += `  * Antigravity: ${p.aiRoles?.antigravity || 'Autonomous Execution'}\n`;
+    md += `  * ChatGPT: ${p.aiRoles?.chatgpt || 'Copy & Product'}\n`;
+    md += `  * Grok: ${p.aiRoles?.grok || 'Research'}\n`;
+    md += `- **Active Tasks (${pTasks.length}):**\n`;
+    pTasks.forEach(t => {
+      const mark = t.status === 'completed' ? '[x]' : '[ ]';
+      md += `  * ${mark} **${t.title}** (${formatAiName(t.assignedAi)} - ${t.status.toUpperCase()})\n`;
+    });
+    md += `\n`;
+  });
+
+  res.setHeader('Content-disposition', 'attachment; filename=OmniAI-Briefing.md');
+  res.setHeader('Content-type', 'text/markdown');
+  res.send(md);
+});
+
+// Export / Backup JSON
 app.get('/api/export', (req, res) => {
   const db = readDb();
   res.setHeader('Content-disposition', 'attachment; filename=ai-projects-backup.json');

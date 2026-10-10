@@ -71,16 +71,30 @@ OmniAI Hub provides a central mission control dashboard that you can open every 
 - Enforces strict evidence-based reporting (must cite exact file paths, commit hashes, or live URLs).
 - Prohibits hallucinating planned features as "completed".
 
-### 10. 🌅 Scheduled Morning Intelligence Script
-- Run `node scripts/morning-briefing.js` or `.\scripts\morning-briefing.ps1` automatically via Windows Task Scheduler or Antigravity Automation.
+### 10. 🌅 Scheduled Morning Intelligence Script & Windows Task Installer
+- Automated morning briefing script (`scripts/morning-briefing.js` and `scripts/morning-briefing.ps1`).
 - Inspects real git commits across all your project folders in the last 24 hours.
-- Pushes the morning briefing directly to your phone.
-- While browsing [Claude.ai](https://claude.ai), [ChatGPT](https://chatgpt.com), or [Grok](https://grok.com), click the bookmarklet to immediately log the conversation URL, title, and auto-detected AI into your morning hub.
+- Dispatches a push notification directly to your phone via `ntfy.sh`.
+- **1-Click Windows Task Scheduler Installer**: Run `powershell -ExecutionPolicy Bypass -File .\scripts\install-morning-task.ps1` to register an automated daily run at 7:30 AM.
 
-### 8. 💾 Zero-Config Persistent Storage & Backup
+### 11. 🔌 Native Model Context Protocol (MCP) Server for Claude Desktop
+- Exposes OmniAI Hub directly to **Claude Desktop** and **Cursor** over stdio JSON-RPC.
+- Claude can query `omniai_list_projects`, retrieve deep project context (`omniai_get_project_context`), report task progress with required verification evidence (`omniai_report_task_progress`), and queue tasks (`omniai_add_task`) without leaving your chat window.
+- Ready-to-paste snippet in `mcp-server/claude-desktop-config-snippet.json`.
+
+### 12. 📊 Verified Git & Disk Telemetry Feed
+- Un-falsifiable audit trail of real Git commits across all discovered repositories in the last 7 days.
+- 1-click copy for commit hashes.
+- 1-click "Link to Task" button: converts any verified commit into an attributed, completed task on your Kanban board.
+
+### 13. 📄 Living PROJECT_STATE.md Exporter
+- Generates a structured, anti-hallucination markdown state file directly inside the target repository directory.
+- Equips entering AI agents (Claude Code, Antigravity, Cursor) with full context: objectives, completed tasks, in-flight work, and linked chat sessions.
+
+### 14. 💾 Zero-Config Persistent Storage & Backup
 - Lightweight local JSON database stored in `data/db.json`.
 - Automatic pre-seeding with Jordan's real projects (MassMailer, ai-for-life, Trading-ALGO, moms-woodworking-business, LandScout).
-- 1-click JSON backup export via `/api/export`.
+- 1-click JSON backup export via `/api/export` and 1-click Executive Briefing via `/api/export/markdown`.
 
 ---
 
@@ -209,20 +223,31 @@ git push -u origin main
 
 ```
 ai-project-organizer/
-├── package.json          # Node.js project manifest & dependencies (Express, Cors)
-├── server.js             # Express API backend & local file scanner
-├── start.bat             # 1-click Windows Batch startup script
-├── start.ps1             # 1-click PowerShell startup script
-├── README.md             # Complete documentation and usage guide
-├── .gitignore            # Git exclusion rules (node_modules, logs, etc.)
+├── package.json               # Node.js project manifest & dependencies (Express, Cors)
+├── server.js                  # Express API backend, multi-dir scanner & telemetry aggregator
+├── start.bat                  # 1-click Windows Batch startup script
+├── start.ps1                  # 1-click PowerShell startup script
+├── README.md                  # Complete documentation and usage guide
+├── .gitignore                 # Git exclusion rules (node_modules, logs, etc.)
 ├── data/
-│   └── db.json           # Persistent JSON data store (projects, tasks, sessions)
+│   └── db.json                # Persistent JSON data store (projects, tasks, sessions)
+├── mcp-server/
+│   ├── index.js               # Model Context Protocol stdio server for Claude Desktop / Cursor
+│   └── claude-desktop-config-snippet.json # Config snippet for Claude Desktop
+├── scripts/
+│   ├── morning-briefing.js    # Morning git scanner & phone push dispatcher
+│   ├── morning-briefing.ps1   # PowerShell wrapper for automated cron execution
+│   ├── install-morning-task.ps1   # 1-click Windows Task Scheduler 7:30 AM registration
+│   └── uninstall-morning-task.ps1 # Task uninstaller
 ├── public/
-│   ├── index.html        # Single-page application HTML & accessible modal markup
-│   ├── styles.css        # Premium dark mode UI styling & responsive layout
-│   └── app.js            # Reactive frontend state controller & API client
+│   ├── index.html             # Single-page application HTML & accessible modal markup
+│   ├── styles.css             # Premium dark mode UI styling & responsive layout
+│   ├── app.js                 # Reactive frontend state controller & API client
+│   ├── manifest.json          # PWA Web App Manifest (installable on iOS/Android)
+│   ├── sw.js                  # PWA Service Worker (offline cache & push notifications)
+│   └── icon.svg               # Vector brand app icon
 └── test/
-    └── test-endpoints.js # End-to-end integration test suite
+    └── test-endpoints.js      # End-to-end integration test suite (15 automated tests)
 ```
 
 ---

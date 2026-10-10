@@ -517,6 +517,67 @@ if (isStaticHosted) {
       });
     }
 
+    if (url === '/api/telemetry/git') {
+      const mockCommits = [
+        {
+          project: "MassMailer",
+          repoPath: "C:\\Users\\jordy\\Projects\\MassMailer",
+          branch: "main",
+          latestTimestamp: Date.now() - 3600000,
+          commits: [
+            { hash: "7a2f1c8", author: "Jordan", relativeTime: "1 hour ago", message: "feat: add SMTP connection pool health check and auto-retry", isToday: true },
+            { hash: "3e9b4d2", author: "Jordan", relativeTime: "18 hours ago", message: "fix: update deliverability rate calculation with fallback thresholds", isToday: true }
+          ]
+        },
+        {
+          project: "ai-for-life",
+          repoPath: "C:\\Users\\jordy\\Projects\\ai-for-life",
+          branch: "main",
+          latestTimestamp: Date.now() - 7200000,
+          commits: [
+            { hash: "8b19d20", author: "Jordan", relativeTime: "2 hours ago", message: "feat: launch interactive demo sandbox player", isToday: true },
+            { hash: "4c7a10f", author: "Jordan", relativeTime: "1 day ago", message: "chore: optimize assets and video thumbnail compression", isToday: false }
+          ]
+        },
+        {
+          project: "Trading-ALGO",
+          repoPath: "C:\\Users\\jordy\\Projects\\Trading-ALGO",
+          branch: "master",
+          latestTimestamp: Date.now() - 86400000,
+          commits: [
+            { hash: "2f8a9e1", author: "Jordan", relativeTime: "1 day ago", message: "perf: vectorize EMA indicator calculation across historical 5m bars", isToday: false }
+          ]
+        },
+        {
+          project: "moms-woodworking-business",
+          repoPath: "C:\\Users\\jordy\\Projects\\moms-woodworking-business",
+          branch: "main",
+          latestTimestamp: Date.now() - 172800000,
+          commits: [
+            { hash: "9d3c5e8", author: "Jordan", relativeTime: "2 days ago", message: "feat: add custom dimension order form and finish selector", isToday: false }
+          ]
+        }
+      ];
+      return jsonResponse({ totalTrackedRepos: mockCommits.length, repos: mockCommits });
+    }
+
+    if (url.startsWith('/api/projects/') && url.endsWith('/export-state') && method === 'POST') {
+      const id = url.split('/api/projects/')[1].replace('/export-state', '');
+      const project = (db.projects || []).find(p => p.id === id);
+      if (!project) return jsonResponse({ error: 'Project not found' }, 404);
+      return jsonResponse({
+        success: true,
+        projectId: project.id,
+        projectName: project.name,
+        writtenPath: null,
+        content: `# ⚡ PROJECT_STATE: ${project.name}\n> Exported from OmniAI Hub (Static Mode)\n\n## Objective\n${project.description || 'N/A'}`
+      });
+    }
+
+    if (url === '/api/notify' && method === 'POST') {
+      return jsonResponse({ success: true, message: 'Notification received' });
+    }
+
     return jsonResponse({ error: 'Not supported' }, 404);
   };
 }
@@ -598,16 +659,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function switchView(viewName) {
     state.currentView = viewName;
     navTabs.forEach(t => t.classList.toggle('active', t.dataset.view === viewName));
+    const mobileNavBtns = document.querySelectorAll('.mobile-nav-btn');
+    mobileNavBtns.forEach(b => b.classList.toggle('active', b.dataset.view === viewName));
     viewPanels.forEach(p => p.classList.toggle('active', p.id === `view-${viewName}`));
 
     if (viewName === 'morning') loadDashboard();
     if (viewName === 'projects') loadProjects();
     if (viewName === 'fleet') loadFleet();
     if (viewName === 'board') loadBoard();
+    if (viewName === 'telemetry') loadTelemetry();
   }
 
   navTabs.forEach(tab => {
     tab.addEventListener('click', () => switchView(tab.dataset.view));
+  });
+
+  document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchView(btn.dataset.view));
   });
 
   // Modal Helpers
@@ -1198,6 +1266,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('proj-id').value = '';
     const btnDel = document.getElementById('btn-delete-project');
     if (btnDel) btnDel.style.display = 'none';
+    const btnExpState = document.getElementById('btn-export-project-state');
+    if (btnExpState) btnExpState.style.display = 'none';
     openModal(modalProject);
   }
 
@@ -1225,8 +1295,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnDel = document.getElementById('btn-delete-project');
     if (btnDel) btnDel.style.display = 'inline-block';
+    const btnExpState = document.getElementById('btn-export-project-state');
+    if (btnExpState) btnExpState.style.display = 'inline-block';
 
     openModal(modalProject);
+  }
+
+  const btnExportProjectState = document.getElementById('btn-export-project-state');
+  if (btnExportProjectState) {
+    btnExportProjectState.addEventListener('click', async () => {
+      const id = document.getElementById('proj-id').value;
+      if (!id) return;
+      showToast('Exporting PROJECT_STATE.md...');
+      try {
+        const res = await fetch(`/api/projects/${id}/export-state`, { method: 'POST' });
+        const data = await res.json();
+        if (data.writtenPath) {
+          showToast(`✅ Saved PROJECT_STATE.md to project folder!`);
+        } else {
+          // If in cloud mode or no directory, download file to client
+          const blob = new Blob([data.content], { type: 'text/markdown' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${data.projectName}-PROJECT_STATE.md`;
+          a.click();
+          URL.revokeObjectURL(url);
+          showToast(`✅ Downloaded ${data.projectName}-PROJECT_STATE.md`);
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Error exporting project state');
+      }
+    });
   }
 
   const btnDeleteProj = document.getElementById('btn-delete-project');
@@ -1696,6 +1797,171 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // ================= EXECUTIVE BRIEFING EXPORT =================
+  const btnExportMarkdown = document.getElementById('btn-export-markdown');
+  if (btnExportMarkdown) {
+    btnExportMarkdown.addEventListener('click', async () => {
+      showToast('Generating executive Markdown briefing...');
+      try {
+        if (!isStaticHosted) {
+          window.location.href = '/api/export/markdown';
+        } else {
+          // Client-side markdown generation in static cloud mode
+          const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+          let md = `# ⚡ OmniAI Hub — Executive Morning Briefing\n`;
+          md += `**Date:** ${dateStr}\n\n`;
+          md += `## 🚀 Active Projects (${state.projects.length})\n\n`;
+          state.projects.forEach(p => {
+            const pTasks = state.tasks.filter(t => t.projectId === p.id);
+            md += `### ${p.name} [${p.status.toUpperCase()} | Priority: ${p.priority.toUpperCase()}]\n`;
+            md += `- **Category:** ${p.category || 'General'}\n`;
+            md += `- **Objective:** ${p.description || 'N/A'}\n`;
+            if (p.directory) md += `- **Directory:** \`${p.directory}\`\n`;
+            md += `- **AI Roles:**\n`;
+            md += `  * Claude: ${p.aiRoles?.claude || 'Architecture'}\n`;
+            md += `  * Antigravity: ${p.aiRoles?.antigravity || 'Autonomous Execution'}\n`;
+            md += `  * ChatGPT: ${p.aiRoles?.chatgpt || 'Copy & Product'}\n`;
+            md += `  * Grok: ${p.aiRoles?.grok || 'Research'}\n`;
+            md += `- **Active Tasks (${pTasks.length}):**\n`;
+            pTasks.forEach(t => {
+              const mark = t.status === 'completed' ? '[x]' : '[ ]';
+              md += `  * ${mark} **${t.title}** (${getAiInfo(t.assignedAi).name} - ${t.status.toUpperCase()})\n`;
+            });
+            md += `\n`;
+          });
+          const blob = new Blob([md], { type: 'text/markdown' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'OmniAI-Briefing.md';
+          a.click();
+          URL.revokeObjectURL(url);
+          showToast('✅ Downloaded OmniAI-Briefing.md');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Error exporting briefing');
+      }
+    });
+  }
+
+  // ================= VERIFIED GIT TELEMETRY =================
+  async function loadTelemetry() {
+    const feed = document.getElementById('telemetry-feed');
+    const repoCountEl = document.getElementById('telemetry-repo-count');
+    const commitCountEl = document.getElementById('telemetry-commit-count');
+    const lastCheckEl = document.getElementById('telemetry-last-check');
+    if (!feed) return;
+
+    feed.innerHTML = '<div class="telemetry-loading">🔍 Scanning git repositories and verified commit logs across disk...</div>';
+
+    try {
+      const res = await fetch('/api/telemetry/git');
+      const data = await res.json();
+      const repos = data.repos || [];
+
+      let totalCommits = 0;
+      repos.forEach(r => { totalCommits += (r.commits || []).length; });
+
+      if (repoCountEl) repoCountEl.textContent = repos.length;
+      if (commitCountEl) commitCountEl.textContent = totalCommits;
+      if (lastCheckEl) lastCheckEl.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (repos.length === 0) {
+        feed.innerHTML = `
+          <div class="telemetry-empty">
+            <p>No git repositories detected in scanned folders with commits in the last 7 days.</p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--text-muted);">
+              Use "Scan Local" to configure custom project directories.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      feed.innerHTML = repos.map(repo => {
+        const commitCount = (repo.commits || []).length;
+        const commitsHtml = (repo.commits || []).map(c => `
+          <div class="telemetry-commit-row">
+            <div class="telemetry-commit-main">
+              <div class="telemetry-commit-meta">
+                <span class="telemetry-hash-pill" title="Click to copy commit hash" data-hash="${escapeHtml(c.hash)}">#${escapeHtml(c.hash)}</span>
+                <span class="telemetry-author">👤 ${escapeHtml(c.author)}</span>
+                <span class="telemetry-time">🕒 ${escapeHtml(c.relativeTime)}</span>
+                ${c.isToday ? '<span class="status-pill in_progress" style="font-size: 0.65rem; padding: 0.1rem 0.4rem;">Today</span>' : ''}
+              </div>
+              <div class="telemetry-message">${escapeHtml(c.message)}</div>
+            </div>
+            <div class="telemetry-action">
+              <button class="btn btn-xs btn-secondary btn-link-commit" 
+                data-project="${escapeHtml(repo.project)}" 
+                data-hash="${escapeHtml(c.hash)}" 
+                data-msg="${escapeHtml(c.message)}"
+                title="Convert this verified commit into a completed task in OmniAI Hub">
+                🔗 Link to Task
+              </button>
+            </div>
+          </div>
+        `).join('');
+
+        return `
+          <div class="telemetry-repo-group">
+            <div class="telemetry-repo-header">
+              <div class="telemetry-repo-info">
+                <span class="telemetry-repo-name">📁 ${escapeHtml(repo.project)}</span>
+                <span class="telemetry-commit-badge">${commitCount} ${commitCount === 1 ? 'commit' : 'commits'} (7d)</span>
+              </div>
+              <div class="telemetry-repo-path" title="${escapeHtml(repo.repoPath)}">${escapeHtml(repo.repoPath)}</div>
+            </div>
+            <div class="telemetry-commit-list">
+              ${commitsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Add click-to-copy for commit hashes
+      feed.querySelectorAll('.telemetry-hash-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          const hash = pill.dataset.hash;
+          navigator.clipboard.writeText(hash);
+          showToast(`📋 Copied hash #${hash} to clipboard`);
+        });
+      });
+
+      // Add button to link commit to task
+      feed.querySelectorAll('.btn-link-commit').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const projectName = btn.dataset.project;
+          const hash = btn.dataset.hash;
+          const msg = btn.dataset.msg;
+          
+          let targetProj = state.projects.find(p => p.name.toLowerCase() === projectName.toLowerCase());
+          
+          openTaskModalForProject(targetProj ? targetProj.id : null);
+          const taskTitleInput = document.getElementById('task-title');
+          if (taskTitleInput) taskTitleInput.value = msg;
+          const taskDescInput = document.getElementById('task-desc');
+          if (taskDescInput) taskDescInput.value = `Verified Git commit #${hash}`;
+          const taskStatusSelect = document.getElementById('task-status');
+          if (taskStatusSelect) taskStatusSelect.value = 'completed';
+        });
+      });
+
+    } catch (err) {
+      console.error(err);
+      feed.innerHTML = `<div class="telemetry-empty">⚠️ Failed to load git telemetry: ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  const btnRefreshTelemetry = document.getElementById('btn-refresh-telemetry');
+  if (btnRefreshTelemetry) {
+    btnRefreshTelemetry.addEventListener('click', () => {
+      loadTelemetry();
+      showToast('Refreshing git telemetry...');
+    });
+  }
 
   // Filter Event Listeners
   projectFilterStatus.addEventListener('change', renderProjects);

@@ -40,6 +40,9 @@
           <button class="nav-tab" data-view="board">
             <span class="tab-icon">📋</span> Kanban Board
           </button>
+          <button class="nav-tab" data-view="telemetry">
+            <span class="tab-icon">📊</span> Verified Telemetry
+          </button>
         </nav>
       </div>
 
@@ -50,6 +53,9 @@
         </div>
 
         <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-export-markdown" title="Download Executive Markdown Briefing">
+            <span class="btn-icon">📄</span> Export Briefing
+          </button>
           <button class="btn btn-secondary" id="btn-open-prompts" title="Anti-Fabrication Prompts for Claude, ChatGPT, Grok">
             <span class="btn-icon">🛡️</span> AI Prompts
           </button>
@@ -367,6 +373,40 @@
           </div>
         </div>
       </section>
+
+      <!-- VIEW 5: VERIFIED TELEMETRY FEED -->
+      <section id="view-telemetry" class="view-panel">
+        <div class="view-header">
+          <div>
+            <h2 class="view-title">📊 Verified Git & Disk Telemetry</h2>
+            <p class="view-subtitle">Un-falsifiable record of real commits and test executions across your project directories</p>
+          </div>
+          <div class="view-actions">
+            <button class="btn btn-secondary" id="btn-refresh-telemetry">
+              <span class="btn-icon">🔄</span> Refresh Feed
+            </button>
+          </div>
+        </div>
+
+        <div class="telemetry-stats-bar">
+          <div class="telemetry-stat-card">
+            <span class="stat-number" id="telemetry-repo-count">0</span>
+            <span class="stat-label">Active Git Repos</span>
+          </div>
+          <div class="telemetry-stat-card">
+            <span class="stat-number" id="telemetry-commit-count">0</span>
+            <span class="stat-label">Verified Commits (7d)</span>
+          </div>
+          <div class="telemetry-stat-card">
+            <span class="stat-number" id="telemetry-last-check">Just now</span>
+            <span class="stat-label">Last Audit Check</span>
+          </div>
+        </div>
+
+        <div class="telemetry-feed" id="telemetry-feed">
+          <div class="telemetry-loading">Loading telemetry data...</div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -447,6 +487,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" id="btn-delete-project" style="display:none; margin-right: auto;">🗑️ Delete Project</button>
+          <button type="button" class="btn btn-secondary" id="btn-export-project-state" style="display:none;" title="Save PROJECT_STATE.md directly into repository for AIs">📄 Export PROJECT_STATE.md</button>
           <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
           <button type="submit" class="btn btn-primary">Save Project</button>
         </div>
@@ -900,6 +941,30 @@ EXECUTION GROUNDING:
 
   <!-- Toast Notification -->
   <div class="toast" id="toast"></div>
+
+  <!-- Mobile Bottom Navigation Bar (PWA friendly) -->
+  <nav class="mobile-bottom-nav">
+    <button class="mobile-nav-btn active" data-view="morning">
+      <span class="m-icon">🌅</span>
+      <span class="m-label">Briefing</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="projects">
+      <span class="m-icon">📁</span>
+      <span class="m-label">Projects</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="fleet">
+      <span class="m-icon">🤖</span>
+      <span class="m-label">AI Fleet</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="board">
+      <span class="m-icon">📋</span>
+      <span class="m-label">Kanban</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="telemetry">
+      <span class="m-icon">📊</span>
+      <span class="m-label">Telemetry</span>
+    </button>
+  </nav>
 
   <script src="app.js"></script>
 </body>
