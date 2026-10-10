@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniAI Project & Task Organizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- App Container -->
+  <div class="app-layout">
+    
+    <!-- Top Header -->
+    <header class="top-nav">
+      <div class="nav-left">
+        <div class="brand-logo">
+          <span class="brand-icon">⚡</span>
+          <div class="brand-text">
+            <span class="brand-title">OmniAI Hub</span>
+            <span class="brand-subtitle">Cross-AI Project & Task Orchestrator</span>
+          </div>
+        </div>
+
+        <nav class="nav-tabs">
+          <button class="nav-tab active" data-view="morning">
+            <span class="tab-icon">🌅</span> Morning Briefing
+          </button>
+          <button class="nav-tab" data-view="projects">
+            <span class="tab-icon">📁</span> Projects (<span id="nav-project-count">0</span>)
+          </button>
+          <button class="nav-tab" data-view="fleet">
+            <span class="tab-icon">🤖</span> AI Fleet View
+          </button>
+          <button class="nav-tab" data-view="board">
+            <span class="tab-icon">📋</span> Kanban Board
+          </button>
+        </nav>
+      </div>
+
+      <div class="nav-right">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="global-search" placeholder="Search projects, tasks, or AI...">
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-open-scanner" title="Scan local directories & AI sessions">
+            <span class="btn-icon">🔄</span> Scan Local
+          </button>
+          <button class="btn btn-secondary" id="btn-open-handoff" title="Generate prompt to hand off work between AIs">
+            <span class="btn-icon">🔀</span> AI Handoff
+          </button>
+          <button class="btn btn-secondary" id="btn-open-capture" title="Quick capture bookmarklet for browser">
+            <span class="btn-icon">📥</span> Quick Capture
+          </button>
+          <button class="btn btn-primary" id="btn-create-project">
+            <span class="btn-icon">➕</span> New Project
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- VIEW 1: MORNING BRIEFING -->
+      <section id="view-morning" class="view-panel active">
+        <!-- Morning Welcome Hero -->
+        <div class="morning-hero">
+          <div class="hero-greeting">
+            <div class="greeting-badge">
+              <span class="pulse-dot"></span>
+              <span id="current-date-str">Loading date...</span>
+            </div>
+            <h1 class="hero-title">Good morning, Jordan.</h1>
+            <p class="hero-tagline">Here is the multi-AI mission status across your active projects today.</p>
+          </div>
+
+          <!-- Quick AI Model Launcher Bar -->
+          <div class="ai-launcher-deck">
+            <span class="launcher-label">QUICK LAUNCH:</span>
+            <a href="https://claude.ai" target="_blank" rel="noreferrer" class="ai-launch-pill claude">
+              <span class="ai-pill-icon">🟣</span>
+              <span class="ai-pill-name">Claude</span>
+              <span class="ai-task-badge" id="badge-claude-count">0 in flight</span>
+            </a>
+            <a href="https://chatgpt.com" target="_blank" rel="noreferrer" class="ai-launch-pill chatgpt">
+              <span class="ai-pill-icon">🟢</span>
+              <span class="ai-pill-name">ChatGPT</span>
+              <span class="ai-task-badge" id="badge-chatgpt-count">0 in flight</span>
+            </a>
+            <a href="https://grok.com" target="_blank" rel="noreferrer" class="ai-launch-pill grok">
+              <span class="ai-pill-icon">⚪</span>
+              <span class="ai-pill-name">Grok</span>
+              <span class="ai-task-badge" id="badge-grok-count">0 in flight</span>
+            </a>
+            <div class="ai-launch-pill antigravity" id="pill-antigravity" title="Google Antigravity active agent on local PC">
+              <span class="ai-pill-icon">🔵</span>
+              <span class="ai-pill-name">Google Antigravity</span>
+              <span class="ai-task-badge" id="badge-antigravity-count">0 in flight</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric Cards Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Active Projects</span>
+              <span class="metric-icon">🚀</span>
+            </div>
+            <div class="metric-value" id="stat-active-projects">0</div>
+            <div class="metric-sub" id="stat-total-projects-sub">of 0 total projects</div>
+          </div>
+
+          <div class="metric-card highlight-claude">
+            <div class="metric-header">
+              <span class="metric-title">Claude (Anthropic)</span>
+              <span class="ai-badge claude">Architect</span>
+            </div>
+            <div class="metric-value" id="stat-claude-tasks">0</div>
+            <div class="metric-sub" id="stat-claude-sub">0 in-progress / review</div>
+          </div>
+
+          <div class="metric-card highlight-antigravity">
+            <div class="metric-header">
+              <span class="metric-title">Google Antigravity</span>
+              <span class="ai-badge antigravity">Autonomous</span>
+            </div>
+            <div class="metric-value" id="stat-antigravity-tasks">0</div>
+            <div class="metric-sub" id="stat-antigravity-sub">0 code executions active</div>
+          </div>
+
+          <div class="metric-card highlight-chatgpt">
+            <div class="metric-header">
+              <span class="metric-title">ChatGPT (OpenAI)</span>
+              <span class="ai-badge chatgpt">Copy & Product</span>
+            </div>
+            <div class="metric-value" id="stat-chatgpt-tasks">0</div>
+            <div class="metric-sub" id="stat-chatgpt-sub">0 in-progress / review</div>
+          </div>
+
+          <div class="metric-card highlight-grok">
+            <div class="metric-header">
+              <span class="metric-title">Grok (xAI)</span>
+              <span class="ai-badge grok">DeepSearch</span>
+            </div>
+            <div class="metric-value" id="stat-grok-tasks">0</div>
+            <div class="metric-sub" id="stat-grok-sub">0 market scans active</div>
+          </div>
+        </div>
+
+        <!-- In-Flight Operations: What AI is completing what right now -->
+        <div class="morning-columns">
+          <div class="morning-col main">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">⚡ In-Flight AI Workloads</h2>
+                <p class="section-desc">What each AI is currently completing across your projects right now.</p>
+              </div>
+              <button class="btn btn-sm btn-secondary" id="btn-add-task-morning">➕ Assign Task</button>
+            </div>
+
+            <div class="in-flight-list" id="in-flight-container">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <div class="morning-col side">
+            <!-- Morning Quick Notes / Scratchpad -->
+            <div class="card scratchpad-card">
+              <div class="card-header">
+                <h3 class="card-title">📝 Morning Scratchpad</h3>
+                <span class="text-muted" style="font-size: 0.75rem;">Instant auto-save</span>
+              </div>
+              <div class="scratchpad-input-row">
+                <input type="text" id="scratchpad-input" placeholder="Jot a thought, prompt idea, or focus...">
+                <button class="btn btn-sm btn-primary" id="btn-save-note">Save</button>
+              </div>
+              <div class="notes-list" id="scratchpad-list">
+                <!-- Notes -->
+              </div>
+            </div>
+
+            <!-- Recent Linked AI Threads -->
+            <div class="card recent-threads-card">
+              <div class="card-header">
+                <h3 class="card-title">🔗 Active AI Web Threads</h3>
+                <button class="btn btn-xs btn-secondary" id="btn-quick-add-link">➕ Link Chat</button>
+              </div>
+              <div class="thread-list" id="morning-threads-container">
+                <!-- Recent threads -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: PROJECTS VIEW -->
+      <section id="view-projects" class="view-panel">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Projects</h1>
+            <p class="view-desc">Unified tracking across all repositories, products, and AI contributors.</p>
+          </div>
+          <div class="view-actions">
+            <div class="filter-group">
+              <select id="project-filter-status" class="select-filter">
+                <option value="all">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="in_progress">In Progress</option>
+                <option value="planning">Planning</option>
+                <option value="review">Review</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btn-create-project-2">➕ New Project</button>
+          </div>
+        </div>
+
+        <div class="projects-grid" id="projects-grid-container">
+          <!-- Project Cards Loaded Here -->
+        </div>
+      </section>
+
+      <!-- VIEW 3: AI FLEET VIEW -->
+      <section id="view-fleet" class="view-panel">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">🤖 AI Fleet Matrix</h1>
+            <p class="view-desc">Work breakdown by AI model. See every task assigned to Claude, ChatGPT, Antigravity, and Grok.</p>
+          </div>
+          <div class="view-actions">
+            <button class="btn btn-secondary" id="btn-open-handoff-2">🔀 Context Handoff</button>
+            <button class="btn btn-primary" id="btn-add-fleet-task">➕ Assign New Task</button>
+          </div>
+        </div>
+
+        <div class="fleet-grid">
+          <!-- Claude Column -->
+          <div class="fleet-col col-claude">
+            <div class="fleet-col-header">
+              <div class="fleet-model-info">
+                <span class="ai-avatar claude">🟣</span>
+                <div>
+                  <h3 class="fleet-model-title">Claude</h3>
+                  <span class="fleet-model-sub">Architecture & Refactoring</span>
+                </div>
+              </div>
+              <span class="fleet-count-pill" id="fleet-count-claude">0</span>
+            </div>
+            <div class="fleet-task-list" id="fleet-tasks-claude"></div>
+          </div>
+
+          <!-- Antigravity Column -->
+          <div class="fleet-col col-antigravity">
+            <div class="fleet-col-header">
+              <div class="fleet-model-info">
+                <span class="ai-avatar antigravity">🔵</span>
+                <div>
+                  <h3 class="fleet-model-title">Google Antigravity</h3>
+                  <span class="fleet-model-sub">Autonomous Execution</span>
+                </div>
+              </div>
+              <span class="fleet-count-pill" id="fleet-count-antigravity">0</span>
+            </div>
+            <div class="fleet-task-list" id="fleet-tasks-antigravity"></div>
+          </div>
+
+          <!-- ChatGPT Column -->
+          <div class="fleet-col col-chatgpt">
+            <div class="fleet-col-header">
+              <div class="fleet-model-info">
+                <span class="ai-avatar chatgpt">🟢</span>
+                <div>
+                  <h3 class="fleet-model-title">ChatGPT</h3>
+                  <span class="fleet-model-sub">Copy, Pitch & Strategy</span>
+                </div>
+              </div>
+              <span class="fleet-count-pill" id="fleet-count-chatgpt">0</span>
+            </div>
+            <div class="fleet-task-list" id="fleet-tasks-chatgpt"></div>
+          </div>
+
+          <!-- Grok Column -->
+          <div class="fleet-col col-grok">
+            <div class="fleet-col-header">
+              <div class="fleet-model-info">
+                <span class="ai-avatar grok">⚪</span>
+                <div>
+                  <h3 class="fleet-model-title">Grok</h3>
+                  <span class="fleet-model-sub">Real-Time Search & Insights</span>
+                </div>
+              </div>
+              <span class="fleet-count-pill" id="fleet-count-grok">0</span>
+            </div>
+            <div class="fleet-task-list" id="fleet-tasks-grok"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: KANBAN BOARD -->
+      <section id="view-board" class="view-panel">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">📋 Multi-AI Task Board</h1>
+            <p class="view-desc">Unified board of all active, in-flight, and completed AI work items.</p>
+          </div>
+          <div class="view-actions">
+            <select id="board-project-filter" class="select-filter">
+              <option value="all">All Projects</option>
+            </select>
+            <select id="board-ai-filter" class="select-filter">
+              <option value="all">All AIs</option>
+              <option value="claude">Claude</option>
+              <option value="antigravity">Google Antigravity</option>
+              <option value="chatgpt">ChatGPT</option>
+              <option value="grok">Grok</option>
+            </select>
+            <button class="btn btn-primary" id="btn-add-board-task">➕ Add Task</button>
+          </div>
+        </div>
+
+        <div class="kanban-grid">
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <span class="col-title">To Do / Queued</span>
+              <span class="col-count" id="count-todo">0</span>
+            </div>
+            <div class="kanban-items" id="kanban-todo"></div>
+          </div>
+
+          <div class="kanban-col active-lane">
+            <div class="kanban-col-header">
+              <span class="col-title">⚡ In Progress (AI Working)</span>
+              <span class="col-count" id="count-in-progress">0</span>
+            </div>
+            <div class="kanban-items" id="kanban-in_progress"></div>
+          </div>
+
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <span class="col-title">👀 Needs Review</span>
+              <span class="col-count" id="count-review">0</span>
+            </div>
+            <div class="kanban-items" id="kanban-review"></div>
+          </div>
+
+          <div class="kanban-col">
+            <div class="kanban-col-header">
+              <span class="col-title">✅ Completed</span>
+              <span class="col-count" id="count-completed">0</span>
+            </div>
+            <div class="kanban-items" id="kanban-completed"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Modal: Project Details & Editor -->
+  <div class="modal-overlay" id="modal-project">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-project-title">Create New Project</h2>
+        <button class="btn-close-modal">&times;</button>
+      </div>
+      <form id="form-project">
+        <input type="hidden" id="proj-id">
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label for="proj-name">Project Name</label>
+            <input type="text" id="proj-name" required placeholder="e.g. MassMailer, ai-for-life">
+          </div>
+          <div class="form-group flex-1">
+            <label for="proj-category">Category</label>
+            <input type="text" id="proj-category" placeholder="e.g. Web App, FinTech, E-Commerce">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="proj-desc">Description & Goal</label>
+          <textarea id="proj-desc" rows="2" placeholder="What is the objective of this project?"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="proj-status">Status</label>
+            <select id="proj-status">
+              <option value="in_progress">In Progress</option>
+              <option value="active">Active</option>
+              <option value="planning">Planning</option>
+              <option value="review">Review</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="proj-priority">Priority</label>
+            <select id="proj-priority">
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent 🔥</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div class="form-group flex-2">
+            <label for="proj-dir">Local Directory (Optional)</label>
+            <input type="text" id="proj-dir" placeholder="e.g. C:\Users\jordy\Projects\my-project">
+          </div>
+        </div>
+
+        <div class="ai-roles-section">
+          <h4 class="roles-section-title">🤖 AI Team Roles for this Project</h4>
+          <p class="roles-section-sub">Define what each AI specializes in for this project.</p>
+
+          <div class="form-group role-row">
+            <label class="role-label"><span class="ai-dot claude"></span> Claude Role:</label>
+            <input type="text" id="role-claude" placeholder="e.g. Architecture, algorithms, deep code refactors">
+          </div>
+          <div class="form-group role-row">
+            <label class="role-label"><span class="ai-dot antigravity"></span> Antigravity Role:</label>
+            <input type="text" id="role-antigravity" placeholder="e.g. Autonomous execution, local test suites, file operations">
+          </div>
+          <div class="form-group role-row">
+            <label class="role-label"><span class="ai-dot chatgpt"></span> ChatGPT Role:</label>
+            <input type="text" id="role-chatgpt" placeholder="e.g. Copywriting, email templates, customer documentation">
+          </div>
+          <div class="form-group role-row">
+            <label class="role-label"><span class="ai-dot grok"></span> Grok Role:</label>
+            <input type="text" id="role-grok" placeholder="e.g. Real-time market research, Twitter sentiment, breaking news">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Task Editor -->
+  <div class="modal-overlay" id="modal-task">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-task-title">Assign AI Task</h2>
+        <button class="btn-close-modal">&times;</button>
+      </div>
+      <form id="form-task">
+        <input type="hidden" id="task-id">
+
+        <div class="form-group">
+          <label for="task-project">Project</label>
+          <select id="task-project" required></select>
+        </div>
+
+        <div class="form-group">
+          <label for="task-title">Task Title</label>
+          <input type="text" id="task-title" required placeholder="e.g. Refactor SMTP worker queue">
+        </div>
+
+        <div class="form-group">
+          <label for="task-desc">Task Details / Instructions</label>
+          <textarea id="task-desc" rows="3" placeholder="Provide context, parameters, or edge cases..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="task-ai">Assigned AI Worker</label>
+            <select id="task-ai" required>
+              <option value="claude">🟣 Claude (Anthropic)</option>
+              <option value="antigravity">🔵 Google Antigravity</option>
+              <option value="chatgpt">🟢 ChatGPT (OpenAI)</option>
+              <option value="grok">⚪ Grok (xAI)</option>
+              <option value="human">👤 Human / Jordy</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="task-status">Status</label>
+            <select id="task-status">
+              <option value="todo">To Do</option>
+              <option value="in_progress">In Progress (AI Working)</option>
+              <option value="review">Needs Review</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="task-priority">Priority</label>
+            <select id="task-priority">
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent 🔥</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Session / Chat Link -->
+  <div class="modal-overlay" id="modal-session">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title">Link AI Chat / Session</h2>
+        <button class="btn-close-modal">&times;</button>
+      </div>
+      <form id="form-session">
+        <div class="form-group">
+          <label for="sess-project">Project</label>
+          <select id="sess-project" required></select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="sess-ai">AI Platform</label>
+            <select id="sess-ai">
+              <option value="claude">🟣 Claude (claude.ai / code)</option>
+              <option value="chatgpt">🟢 ChatGPT (chatgpt.com)</option>
+              <option value="grok">⚪ Grok (grok.com / x.ai)</option>
+              <option value="antigravity">🔵 Google Antigravity</option>
+            </select>
+          </div>
+          <div class="form-group flex-2">
+            <label for="sess-title">Thread / Conversation Title</label>
+            <input type="text" id="sess-title" required placeholder="e.g. SMTP Concurrency Architecture">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="sess-url">URL or Session ID</label>
+          <input type="text" id="sess-url" required placeholder="https://claude.ai/chat/... or https://chatgpt.com/c/...">
+        </div>
+
+        <div class="form-group">
+          <label for="sess-notes">Session Notes / Key Decisions</label>
+          <textarea id="sess-notes" rows="2" placeholder="What key insights or code decisions came from this chat?"></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Thread Link</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Cross-AI Context Handoff Studio -->
+  <div class="modal-overlay" id="modal-handoff">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">🔀 Cross-AI Context Handoff Studio</h2>
+          <p class="modal-sub">Generate perfectly engineered prompts to transition work between Claude, ChatGPT, Antigravity, and Grok without repeating yourself.</p>
+        </div>
+        <button class="btn-close-modal">&times;</button>
+      </div>
+
+      <div class="handoff-controls">
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label for="handoff-project">Select Project</label>
+            <select id="handoff-project"></select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="handoff-source">Handoff From (Source)</label>
+            <select id="handoff-source">
+              <option value="claude">🟣 Claude</option>
+              <option value="chatgpt">🟢 ChatGPT</option>
+              <option value="antigravity">🔵 Google Antigravity</option>
+              <option value="grok">⚪ Grok</option>
+              <option value="human">👤 You (Jordan)</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="handoff-target">Hand Off To (Target AI)</label>
+            <select id="handoff-target">
+              <option value="antigravity">🔵 Google Antigravity</option>
+              <option value="claude">🟣 Claude</option>
+              <option value="chatgpt">🟢 ChatGPT</option>
+              <option value="grok">⚪ Grok</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="handoff-specific">Specific Objective for Target AI (Optional)</label>
+          <input type="text" id="handoff-specific" placeholder="e.g. Implement the database migration and verify with unit tests">
+        </div>
+
+        <button class="btn btn-primary" id="btn-generate-handoff">⚡ Generate Handoff Prompt</button>
+      </div>
+
+      <div class="handoff-result-container">
+        <div class="result-header">
+          <span class="result-title">Generated Prompt Ready to Paste:</span>
+          <div class="result-actions">
+            <button class="btn btn-sm btn-secondary" id="btn-copy-handoff">📋 Copy Prompt</button>
+            <a href="#" target="_blank" class="btn btn-sm btn-primary" id="btn-launch-target-ai">🚀 Open Target AI</a>
+          </div>
+        </div>
+        <textarea id="handoff-output" class="handoff-output" readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Local Scanner -->
+  <div class="modal-overlay" id="modal-scanner">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">🔄 Local AI & Project Auto-Scanner</h2>
+          <p class="modal-sub">Scan your machine for existing projects, Claude Code sessions, and Antigravity logs.</p>
+        </div>
+        <button class="btn-close-modal">&times;</button>
+      </div>
+
+      <div class="scanner-body">
+        <div class="scan-summary-bar">
+          <span id="scan-status-text">Scanning directories...</span>
+          <button class="btn btn-sm btn-secondary" id="btn-rescan">Re-Scan Disk</button>
+        </div>
+
+        <div class="scanner-sections">
+          <!-- Found Local Projects -->
+          <div class="scan-section">
+            <h4 class="scan-section-title">📁 Projects in <code>C:\Users\jordy\Projects</code></h4>
+            <div class="scan-list" id="scan-projects-list">Loading...</div>
+          </div>
+
+          <!-- Found Claude Code Projects -->
+          <div class="scan-section">
+            <h4 class="scan-section-title">🟣 Claude Code Workspaces in <code>~/.claude/projects</code></h4>
+            <div class="scan-list" id="scan-claude-list">Loading...</div>
+          </div>
+
+          <!-- Found Google Antigravity Sessions -->
+          <div class="scan-section">
+            <h4 class="scan-section-title">🔵 Antigravity Autonomous Sessions in <code>~/.gemini/antigravity/brain</code></h4>
+            <div class="scan-list" id="scan-antigravity-list">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Quick Capture Bookmarklet Helper -->
+  <div class="modal-overlay" id="modal-capture">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title">📥 1-Click Browser Quick Capture</h2>
+        <button class="btn-close-modal">&times;</button>
+      </div>
+      <div class="capture-instructions">
+        <p>Easily send active chats from <strong>Claude.ai</strong>, <strong>ChatGPT</strong>, or <strong>Grok</strong> into this organizer with one click while browsing:</p>
+
+        <div class="bookmarklet-zone">
+          <p class="bookmarklet-prompt">👉 <strong>Drag this button to your Bookmarks Bar:</strong></p>
+          <a class="bookmarklet-btn" href="javascript:(function(){const title=document.title;const url=window.location.href;fetch('http://localhost:3456/api/capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,url,notes:'Saved via Bookmarklet'})}).then(r=>r.json()).then(d=>alert('⚡ Saved chat to OmniAI Hub!')).catch(e=>alert('Hub not reachable. Make sure it is running on localhost:3456'));})();" title="Drag to bookmarks bar">
+            ⚡ Quick-Add to AI Hub
+          </a>
+        </div>
+
+        <ol class="capture-steps">
+          <li>Drag the button above directly into your browser's bookmark bar.</li>
+          <li>Whenever you have a great conversation in Claude, ChatGPT, or Grok, click the bookmark.</li>
+          <li>It instantly logs the thread URL and title right into your morning dashboard!</li>
+        </ol>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
