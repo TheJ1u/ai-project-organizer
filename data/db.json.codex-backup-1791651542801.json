@@ -1,0 +1,540 @@
+{
+  "projects": [
+    {
+      "id": "proj_aidailywatch",
+      "name": "AI Daily Watch",
+      "description": "Daily curated intelligence briefing for Jordan (IS student in Utah). Tracks 7 pillars: frontier AI, Utah policy & sandbox, science, workforce shifts, new models, Silicon Slopes tech, and compute infrastructure.",
+      "status": "active",
+      "priority": "high",
+      "category": "Intelligence & Research",
+      "directory": "C:\\Users\\jordy\\Projects\\ai-project-organizer\\data\\daily-watch",
+      "aiRoles": {
+        "claude": "Deep synthesis, IS student career takeaways, and curriculum connections",
+        "grok": "Live web & X trend research across 7 news pillars",
+        "antigravity": "Automated morning script runner, archive generation, and phone push",
+        "chatgpt": "Executive summary drafting and formatting for email/newsletters"
+      },
+      "createdAt": "2026-10-10T10:40:00.000Z",
+      "updatedAt": "2026-10-10T10:40:00.000Z"
+    },
+    {
+      "id": "proj_massmailer",
+      "name": "MassMailer",
+      "description": "High-volume email outreach automation system with SMTP rotation and deliverability tracking.",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Automation & Outreach",
+      "directory": "C:\\Users\\jordy\\Projects\\MassMailer",
+      "aiRoles": {
+        "claude": "Core TypeScript/Node architecture, queue workers & retry policies",
+        "chatgpt": "Cold outreach copy, A/B test email variants, follow-up sequences",
+        "antigravity": "Autonomous test runner, bulk test mocks & CLI tools",
+        "grok": "Inbox deliverability news, spam filter algo updates & blacklist research"
+      },
+      "createdAt": "2026-10-08T18:00:00.000Z",
+      "updatedAt": "2026-10-09T20:30:00.000Z"
+    },
+    {
+      "id": "proj_aiforlife",
+      "name": "ai-for-life",
+      "description": "AI education platform & interactive portal helping students master generative tools.",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "EdTech & Web",
+      "directory": "C:\\Users\\jordy\\Projects\\ai-for-life",
+      "aiRoles": {
+        "claude": "Interactive demo video player, student discount flows & frontend UI",
+        "chatgpt": "Curriculum design, quiz generation & beginner explainers",
+        "antigravity": "Codebase structuring, asset pipelines & deployment automation",
+        "grok": "Competitor course benchmarks, viral tech trends & community Q&A"
+      },
+      "createdAt": "2026-10-07T14:00:00.000Z",
+      "updatedAt": "2026-10-09T13:14:00.000Z"
+    },
+    {
+      "id": "proj_tradingalgo",
+      "name": "Trading-ALGO",
+      "description": "Quantitative trading strategies, backtesting framework and market signal processors.",
+      "status": "active",
+      "priority": "urgent",
+      "category": "FinTech & Quant",
+      "directory": "C:\\Users\\jordy\\Projects\\Trading-ALGO",
+      "aiRoles": {
+        "claude": "Mathematical strategy formulation, indicator vectorization & code audit",
+        "chatgpt": "Strategy documentation, trading journal summaries & risk checklists",
+        "antigravity": "Fast execution engine, historical bar data ingestion & unit tests",
+        "grok": "Real-time market sentiment on X, macro breaking news & regulatory alerts"
+      },
+      "createdAt": "2026-10-05T10:00:00.000Z",
+      "updatedAt": "2026-10-08T12:54:00.000Z"
+    },
+    {
+      "id": "proj_momswoodworking",
+      "name": "moms-woodworking-business",
+      "description": "E-commerce catalog and customer portal for artisanal handcrafted woodworking.",
+      "status": "active",
+      "priority": "medium",
+      "category": "E-Commerce",
+      "directory": "C:\\Users\\jordy\\Projects\\moms-woodworking-business",
+      "aiRoles": {
+        "claude": "Storefront UI components, shopping cart state & checkout logic",
+        "chatgpt": "Engaging product stories, dimensions descriptions & customer email templates",
+        "antigravity": "Image optimization scripts & catalog schema validations",
+        "grok": "Etsy trending wood finishes, holiday gift demand & local artisan pricing"
+      },
+      "createdAt": "2026-10-08T19:00:00.000Z",
+      "updatedAt": "2026-10-09T21:27:00.000Z"
+    },
+    {
+      "id": "proj_landscout",
+      "name": "LandScout",
+      "description": "Automated real estate land finder with zoning verification and tax parcel scraping.",
+      "status": "planning",
+      "priority": "medium",
+      "category": "PropTech & Scraping",
+      "directory": "C:\\Users\\jordy\\Projects\\LandScout",
+      "aiRoles": {
+        "claude": "GIS mapping data pipelines, parcel boundaries & API integration",
+        "chatgpt": "Zoning summary generator & landowner outreach letter drafts",
+        "antigravity": "Scraper resilience, rate limit handling & SQLite caching",
+        "grok": "Municipal zoning law updates, commercial land demand & satellite analysis"
+      },
+      "createdAt": "2026-09-29T15:00:00.000Z",
+      "updatedAt": "2026-10-08T16:00:00.000Z"
+    },
+    {
+      "id": "proj_1791651397881_alua",
+      "name": "ai-project-organizer",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\ai-project-organizer",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\ai-project-organizer",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_p75p",
+      "name": "All Ball Repos",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\All Ball Repos",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\All Ball Repos",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_yv2q",
+      "name": "desktop email",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\desktop email",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\desktop email",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_t0y1",
+      "name": "Insurance_CRM_Platform",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\Insurance_CRM_Platform",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\Insurance_CRM_Platform",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_i7qf",
+      "name": "Insurance_Website",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\Insurance_Website",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\Insurance_Website",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_wf1w",
+      "name": "Jordan Finance",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\Jordan Finance",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\Jordan Finance",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "proj_1791651397881_thjo",
+      "name": "Moms_Woodworking",
+      "description": "Discovered local project at C:\\Users\\jordy\\Projects\\Moms_Woodworking",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "Software Development",
+      "directory": "C:\\Users\\jordy\\Projects\\Moms_Woodworking",
+      "aiRoles": {
+        "claude": "Core architecture, algorithm logic & deep code audits",
+        "chatgpt": "Documentation, user flows & copy",
+        "antigravity": "Autonomous test execution & file scaffolding",
+        "grok": "Market intelligence & technical research"
+      },
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_dailywatch_1",
+      "projectId": "proj_aidailywatch",
+      "title": "Compile AI Daily Watch edition for October 10, 2026",
+      "description": "Researched 7 pillars: Claude Haiku 5.5, Utah Gov Cox Pro-Human AI Order, Utah OAIP Health Sandbox, $1.8B Biohub, FLUX.3, $5M Utah AI Moonshot deadline Oct 15.",
+      "assignedAi": "antigravity",
+      "status": "completed",
+      "priority": "high",
+      "createdAt": "2026-10-10T10:40:00.000Z",
+      "updatedAt": "2026-10-10T10:41:00.000Z"
+    },
+    {
+      "id": "task_dailywatch_2",
+      "projectId": "proj_aidailywatch",
+      "title": "Automate daily watch runner into 7:30 AM morning briefing script",
+      "description": "Integrate daily watch digest into morning push alerts and scratchpad.",
+      "assignedAi": "claude",
+      "status": "completed",
+      "priority": "medium",
+      "createdAt": "2026-10-10T10:40:00.000Z",
+      "updatedAt": "2026-10-10T10:41:00.000Z"
+    },
+    {
+      "id": "task_1",
+      "projectId": "proj_massmailer",
+      "title": "Refactor SMTP queue worker retry mechanism",
+      "description": "Fix exponential backoff and connection timeout handling for high-concurrency sending.",
+      "assignedAi": "claude",
+      "status": "in_progress",
+      "priority": "high",
+      "createdAt": "2026-10-09T18:00:00.000Z",
+      "updatedAt": "2026-10-09T20:00:00.000Z"
+    },
+    {
+      "id": "task_2",
+      "projectId": "proj_massmailer",
+      "title": "Draft 5 personalized B2B cold outreach email templates",
+      "description": "Write compelling 3-step sequence focusing on deliverability pain points.",
+      "assignedAi": "chatgpt",
+      "status": "in_progress",
+      "priority": "medium",
+      "createdAt": "2026-10-09T19:00:00.000Z",
+      "updatedAt": "2026-10-09T21:00:00.000Z"
+    },
+    {
+      "id": "task_3",
+      "projectId": "proj_massmailer",
+      "title": "Implement autonomous CLI test mock harness",
+      "description": "Generate end-to-end sandbox runner to simulate 10,000 sent emails without hitting live endpoints.",
+      "assignedAi": "antigravity",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-09T19:30:00.000Z",
+      "updatedAt": "2026-10-09T19:30:00.000Z"
+    },
+    {
+      "id": "task_4",
+      "projectId": "proj_massmailer",
+      "title": "Investigate October 2026 Gmail/Yahoo DMARC enforcement updates",
+      "description": "Check latest spam threshold rules and DKIM rotation requirements.",
+      "assignedAi": "grok",
+      "status": "completed",
+      "priority": "medium",
+      "createdAt": "2026-10-09T16:00:00.000Z",
+      "updatedAt": "2026-10-09T17:30:00.000Z"
+    },
+    {
+      "id": "task_5",
+      "projectId": "proj_aiforlife",
+      "title": "Finalize tour video & interactive preview embeds",
+      "description": "Polish responsive player container and interactive student code sandbox.",
+      "assignedAi": "claude",
+      "status": "review",
+      "priority": "high",
+      "createdAt": "2026-10-09T12:00:00.000Z",
+      "updatedAt": "2026-10-09T13:14:00.000Z"
+    },
+    {
+      "id": "task_6",
+      "projectId": "proj_aiforlife",
+      "title": "Create interactive module quiz questions for Antigravity & Claude Code",
+      "description": "Draft 15 scenario-based questions evaluating tool choices and multi-agent setup.",
+      "assignedAi": "chatgpt",
+      "status": "todo",
+      "priority": "medium",
+      "createdAt": "2026-10-09T14:00:00.000Z",
+      "updatedAt": "2026-10-09T14:00:00.000Z"
+    },
+    {
+      "id": "task_7",
+      "projectId": "proj_tradingalgo",
+      "title": "Optimize Mean Reversion vector calculations in NumPy",
+      "description": "Profile 5-minute bar calculations to reduce CPU bottleneck by 40%.",
+      "assignedAi": "claude",
+      "status": "in_progress",
+      "priority": "urgent",
+      "createdAt": "2026-10-09T17:00:00.000Z",
+      "updatedAt": "2026-10-09T20:15:00.000Z"
+    },
+    {
+      "id": "task_8",
+      "projectId": "proj_tradingalgo",
+      "title": "Build live test suite for broker order gateway",
+      "description": "Automate edge cases: partial fills, slippage safeguards, and killswitch trigger.",
+      "assignedAi": "antigravity",
+      "status": "in_progress",
+      "priority": "urgent",
+      "createdAt": "2026-10-09T18:30:00.000Z",
+      "updatedAt": "2026-10-09T21:10:00.000Z"
+    },
+    {
+      "id": "task_9",
+      "projectId": "proj_tradingalgo",
+      "title": "Scan crypto & tech stock sentiment trends on X (Twitter)",
+      "description": "Aggregate key ticker mentions ($NVDA, $BTC, $ETH) and highlight unusual spikes.",
+      "assignedAi": "grok",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-09T20:00:00.000Z",
+      "updatedAt": "2026-10-09T20:00:00.000Z"
+    },
+    {
+      "id": "task_10",
+      "projectId": "proj_momswoodworking",
+      "title": "Write rich descriptions for walnut live-edge dining tables",
+      "description": "Focus on craftsmanship, dimensions, wood origins, and protective finish care.",
+      "assignedAi": "chatgpt",
+      "status": "todo",
+      "priority": "medium",
+      "createdAt": "2026-10-09T15:00:00.000Z",
+      "updatedAt": "2026-10-09T15:00:00.000Z"
+    },
+    {
+      "id": "task_11",
+      "projectId": "proj_momswoodworking",
+      "title": "Research top holiday search trends for custom wood gifts",
+      "description": "Identify high-converting keywords and popular price points on Etsy & Pinterest.",
+      "assignedAi": "grok",
+      "status": "review",
+      "priority": "medium",
+      "createdAt": "2026-10-09T16:00:00.000Z",
+      "updatedAt": "2026-10-09T19:30:00.000Z"
+    },
+    {
+      "id": "task_claude_1791651397881_8tdw",
+      "projectId": "proj_aiforlife",
+      "title": "Review and refine: 50bf5ba Add AI 101 for beginners, facilitator guid",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\ai-for-life.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_1xvl",
+      "projectId": "proj_1791651397881_alua",
+      "title": "Review and refine: f7f9fe9 docs: add GitHub Pages live badges, previe",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\ai-project-organizer.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_vx1k",
+      "projectId": "proj_1791651397881_p75p",
+      "title": "Code audit and modular architecture review for All Ball Repos",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\All Ball Repos.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_jrdc",
+      "projectId": "proj_1791651397881_yv2q",
+      "title": "Code audit and modular architecture review for desktop email",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\desktop email.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_309p",
+      "projectId": "proj_1791651397881_t0y1",
+      "title": "Review and refine: ae79555 Add SunFire partner API request email temp",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\Insurance_CRM_Platform.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_xax8",
+      "projectId": "proj_1791651397881_i7qf",
+      "title": "Review and refine: 51c316a Enlarge hero advisor photo to 128px on des",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\Insurance_Website.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_ua7c",
+      "projectId": "proj_1791651397881_wf1w",
+      "title": "Code audit and modular architecture review for Jordan Finance",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\Jordan Finance.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_7zj6",
+      "projectId": "proj_landscout",
+      "title": "Code audit and modular architecture review for LandScout",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\LandScout.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_03f7",
+      "projectId": "proj_momswoodworking",
+      "title": "Review and refine: bd03b62 Add serverless Cloudflare Worker for dynam",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\moms-woodworking-business.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    },
+    {
+      "id": "task_claude_1791651397881_hfqq",
+      "projectId": "proj_1791651397881_thjo",
+      "title": "Review and refine: 201c6ec Build woodworking-for-literacy website: ha",
+      "description": "Analyze codebase structure, verify TypeScript/Python types, and eliminate technical debt in C:\\Users\\jordy\\Projects\\Moms_Woodworking.",
+      "assignedAi": "claude",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2026-10-10T16:56:37.881Z",
+      "updatedAt": "2026-10-10T16:56:37.881Z"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "sess_1",
+      "projectId": "proj_massmailer",
+      "title": "Queue Worker & SMTP Concurrency Refactor",
+      "ai": "claude",
+      "url": "https://claude.ai/code/session_01XiDHetDPp1L3TAw3VP1Rjd",
+      "notes": "Architected backoff retries and connection pool balancing.",
+      "createdAt": "2026-10-09T18:00:00.000Z"
+    },
+    {
+      "id": "sess_2",
+      "projectId": "proj_massmailer",
+      "title": "Outreach Copy & Cold Sequence Ideation",
+      "ai": "chatgpt",
+      "url": "https://chatgpt.com/c/66fb9c00-2d88-8005-9a80-bfd8b8772a91",
+      "notes": "Generated 3 variants of pitch email for SaaS founders.",
+      "createdAt": "2026-10-09T19:00:00.000Z"
+    },
+    {
+      "id": "sess_3",
+      "projectId": "proj_tradingalgo",
+      "title": "Real-time Order Execution & Risk Engine",
+      "ai": "antigravity",
+      "url": "local://antigravity/session/120f4050-6f6d-43e3-8cc5-d4cc4e070268",
+      "notes": "Antigravity agent executing local code improvements and unit tests.",
+      "createdAt": "2026-10-09T21:00:00.000Z"
+    },
+    {
+      "id": "sess_4",
+      "projectId": "proj_tradingalgo",
+      "title": "Grok Market Pulse & Sentiment Analysis",
+      "ai": "grok",
+      "url": "https://grok.com/share/b81f9a2b",
+      "notes": "Queried Grok DeepSearch for overnight geopolitical risk factors.",
+      "createdAt": "2026-10-09T20:00:00.000Z"
+    }
+  ],
+  "quickNotes": [
+    {
+      "id": "note_1791650582703",
+      "text": "🌅 Morning Briefing (Oct 10): 3 repo(s) committed, 0 Claude sessions, 5 Antigravity runs.",
+      "createdAt": "2026-10-10T16:43:02.703Z"
+    },
+    {
+      "id": "note_dailywatch_oct10",
+      "text": "📰 AI Daily Watch (Oct 10): Claude Haiku 5.5 released (75% cheaper coding); Utah Gov Cox signed Pro-Human AI Executive Order expanding OAIP Health Sandbox; Utah $5M AI Moonshot applications close Oct 15.",
+      "createdAt": "2026-10-10T10:41:00.000Z"
+    },
+    {
+      "id": "note_1791645678872",
+      "text": "🌅 Morning Briefing (Oct 10): 3 repo(s) committed, 0 Claude sessions, 5 Antigravity runs.",
+      "createdAt": "2026-10-10T15:21:18.872Z"
+    },
+    {
+      "id": "note_1",
+      "text": "Morning routine: Check Grok sentiment scan -> Review Claude code PRs -> Let Antigravity run test suites -> Use ChatGPT for customer replies.",
+      "createdAt": "2026-10-09T21:00:00.000Z"
+    }
+  ]
+}
